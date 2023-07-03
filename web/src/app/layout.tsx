@@ -16,7 +16,7 @@ const baiJamjuree = BaiJamjuree({
 })
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const isAutenticado = true
+  const isAutenticado = false
 
   return (
     <html lang="pt-br">

@@ -1,13 +1,13 @@
-// import Image from 'next/image'
-// import logo from '../../app/icon.png'
+import Image from 'next/image'
+import logo from '../../app/icon.png'
 
 export default function LayoutLogin() {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gray-100 sm:py-12">
       <div className="xs:p-0 mx-auto p-10 md:w-full md:max-w-md">
-        {/* <div className="mb-5 flex justify-center">
+        <div className="mb-5 flex justify-center">
           <Image src={logo} alt="NLW Spacetime" height={120} />
-        </div> */}
+        </div>
         <div className="w-full divide-y divide-gray-200 rounded-lg bg-white shadow">
           <div className="px-5 py-7">
             <label className="block pb-1 text-sm font-semibold text-gray-600">
