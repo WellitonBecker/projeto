@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const signInUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`
+const urlBase = String(process.env.NEXT_URL_BASE);
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
 
   if (!token) {
-    return NextResponse.redirect(signInUrl, {
+    return NextResponse.redirect(urlBase, {
       headers: {
         'Set-Cookie': `redirectTo=${request.url}; Path=/; HttpOnly max-age=20;`,
       },
@@ -17,5 +17,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/memories/:path*',
+  matcher: '/agendamentos/:path*',
 }

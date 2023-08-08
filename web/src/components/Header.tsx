@@ -1,7 +1,10 @@
 import { Menu } from 'lucide-react'
 import { Profile } from './Profile'
+import { getUser } from '@/lib/auth'
 
 export default function Header() {
+  const { name, avatarUrl } = getUser()
+  
   return (
     <div className="flex h-16 w-full flex-col bg-gray-300 md:space-y-4">
       <header className="z-40 flex h-16 w-full items-center justify-between">
@@ -12,7 +15,7 @@ export default function Header() {
         </div>
         <div className="relative z-20 flex h-full  justify-end px-3 md:w-full">
           <div className="relative flex w-full items-center justify-end space-x-4 p-1">
-            <Profile />
+            <Profile avatarUrl={avatarUrl} name={name} />
           </div>
         </div>
       </header>

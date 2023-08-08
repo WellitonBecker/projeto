@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { MutableRefObject } from 'react'
 
 interface props {
@@ -5,6 +7,11 @@ interface props {
 }
 
 export default function UserMenu({ menuRef }: props) {
+  const router = useRouter()
+
+  function onClickSair() {
+    router.push('/api/auth/logout')
+  }
   return (
     <div
       ref={menuRef}
@@ -18,7 +25,7 @@ export default function UserMenu({ menuRef }: props) {
       </a>
       <hr className="text-gray-100" />
       <a
-        href="/sair"
+        onClick={onClickSair}
         className="block rounded-b-lg px-4 py-2 text-red-500 hover:bg-gray-50"
       >
         Sair

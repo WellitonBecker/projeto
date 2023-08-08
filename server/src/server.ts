@@ -3,6 +3,8 @@ import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
 import fastify from 'fastify'
+import { empresasRoute } from './routes/empresas'
+import { usuarioRoute } from './routes/usuario'
 
 const app = fastify()
 
@@ -18,7 +20,8 @@ app.register(jwt, {
   secret: 'projeto_tcc',
 })
 
-// app.register(memoriesRoutes)
+app.register(empresasRoute)
+app.register(usuarioRoute)
 // app.register(authRoutes)
 // app.register(uploadRoutes)
 

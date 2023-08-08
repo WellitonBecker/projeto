@@ -7,3 +7,37 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilizando a barra de rolagem */
+/* Largura da barra de rolagem */
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Rastro da barra de rolagem (a área que não está preenchida) */
+html::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+}
+
+/* Cor da barra de rolagem em si */
+html::-webkit-scrollbar-thumb {
+  background-color: #a0a0a0;
+  border-radius: 3px;
+}
+
+/* Cor da barra de rolagem em hover */
+html::-webkit-scrollbar-thumb:hover {
+  background-color: #808080;
+}
+
+/* Canto inferior direito (quando a barra de rolagem e o conteúdo se encontram) */
+html:-webkit-scrollbar-corner {
+  background-color: #f0f0f0;
+}
+
+

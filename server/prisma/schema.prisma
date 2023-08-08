@@ -1,23 +1,156 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String @id @default(uuid())
-  googleId  Int    @unique
-  name      String
-  login     String
-  avatarUrl String
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model agendamento {
+  agecodigo          BigInt             @id(map: "pk_agendamento") @default(autoincrement())
+  agesituacao        Int                @default(1) @db.SmallInt
+  agevalor           Decimal            @db.Decimal(10, 2)
+  usucodigofun       BigInt
+  empcodigo          BigInt
+  sersequencia       Int                @db.SmallInt
+  usucodigocli       BigInt
+  funcionarioservico funcionarioservico @relation(fields: [empcodigo, sersequencia, usucodigofun], references: [empcodigo, sersequencia, usucodigo], onDelete: NoAction, onUpdate: NoAction, map: "funcionarioservico_agendamento_fk")
+  usuario            usuario            @relation(fields: [usucodigocli], references: [usucodigo], onDelete: NoAction, onUpdate: NoAction, map: "usuario_agendamento_fk")
+  movimentacao       movimentacao[]
 }
 
-model Company {
-  id String @id @default(uuid())
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model empresa {
+  empcodigo          BigInt               @id(map: "pk_empresa") @default(autoincrement())
+  empnome            String               @db.VarChar(100)
+  empemail           String               @db.VarChar(200)
+  emptelefone        String               @db.VarChar(15)
+  empendereco        String               @db.VarChar(100)
+  funcionarioempresa funcionarioempresa[]
+  horariosempresa    horariosempresa[]
+  movimentacao       movimentacao[]
+  produto            produto[]
+  restricoesagenda   restricoesagenda[]
+  servico            servico[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model funcionarioempresa {
+  usucodigo          BigInt
+  empcodigo          BigInt
+  fueativo           Int                  @default(1) @db.SmallInt
+  fuetipo            Int                  @db.SmallInt
+  fuesalario         Decimal?             @db.Decimal(10, 2)
+  empresa            empresa              @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_funcionarioempresa_fk")
+  usuario            usuario              @relation(fields: [usucodigo], references: [usucodigo], onDelete: NoAction, onUpdate: NoAction, map: "usuario_funcionarioempresa_fk")
+  funcionarioservico funcionarioservico[]
+  movimentacao       movimentacao[]
+  restricoesagenda   restricoesagenda[]
+
+  @@id([usucodigo, empcodigo], map: "pk_funcionario_empresa")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model funcionarioservico {
+  usucodigo          BigInt
+  empcodigo          BigInt
+  sersequencia       Int                @db.SmallInt
+  fusativo           Int                @db.SmallInt
+  agendamento        agendamento[]
+  funcionarioempresa funcionarioempresa @relation(fields: [empcodigo, usucodigo], references: [empcodigo, usucodigo], onDelete: NoAction, onUpdate: NoAction, map: "funcionarioempresa_funcionarioservico_fk")
+  servico            servico            @relation(fields: [empcodigo, sersequencia], references: [empcodigo, sersequencia], onDelete: NoAction, onUpdate: NoAction, map: "servico_funcionarioservico_fk")
+
+  @@id([usucodigo, empcodigo, sersequencia], map: "pk_funcionarioservico")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model horariosempresa {
+  hoediasemana      Int      @db.SmallInt
+  empcodigo         BigInt
+  hoehorarioinicio  DateTime @db.Time(6)
+  hoehorariotermino DateTime @db.Time(6)
+  empresa           empresa  @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_horariosempresa_fk")
+
+  @@id([hoediasemana, empcodigo], map: "pk_horarios_empresa")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model movimentacao {
+  empcodigo            BigInt
+  movsequencia         BigInt              @default(autoincrement())
+  movdescricao         String              @db.VarChar(100)
+  movtipo              Int                 @db.SmallInt
+  movvalor             Decimal             @db.Decimal(10, 2)
+  movdatahoracadastro  String              @db.VarChar
+  movmovimento         Int                 @db.SmallInt
+  movmesano            Int                 @db.SmallInt
+  movquantidadeproduto Int
+  usucodigofun         BigInt?
+  procodigo            Int?                @db.SmallInt
+  agecodigo            BigInt?
+  agendamento          agendamento?        @relation(fields: [agecodigo], references: [agecodigo], onDelete: NoAction, onUpdate: NoAction, map: "agendamento_movimentacao_fk")
+  empresa              empresa             @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_despesaempresa_fk")
+  funcionarioempresa   funcionarioempresa? @relation(fields: [usucodigofun, empcodigo], references: [usucodigo, empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "funcionarioempresa_despesaempresa_fk")
+  produto              produto?            @relation(fields: [procodigo, empcodigo], references: [procodigo, empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "produto_movimentacao_fk")
+
+  @@id([empcodigo, movsequencia], map: "pk_movimentacao")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model produto {
+  procodigo          Int            @default(autoincrement()) @db.SmallInt
+  empcodigo          BigInt
+  prodescricao       String         @db.VarChar(100)
+  proquantidadeatual Int
+  proativo           Int            @default(1) @db.SmallInt
+  movimentacao       movimentacao[]
+  empresa            empresa        @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_produto_fk")
+
+  @@id([procodigo, empcodigo], map: "pk_produto")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model restricoesagenda {
+  reacodigo          BigInt             @id(map: "pk_restricoesagenda")
+  reahorarioinicio   DateTime           @db.Time(6)
+  reahorariotermino  DateTime           @db.Time(6)
+  reaativo           Int                @default(1) @db.SmallInt
+  reatipo            Int                @db.SmallInt
+  readata            DateTime           @db.Date
+  empcodigo          BigInt
+  usucodigo          BigInt
+  empresa            empresa            @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_restricoesagenda_fk")
+  funcionarioempresa funcionarioempresa @relation(fields: [usucodigo, empcodigo], references: [usucodigo, empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "funcionarioempresa_restricoesagenda_fk")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model servico {
+  empcodigo          BigInt
+  sersequencia       Int                  @default(autoincrement()) @db.SmallInt
+  serdescricao       String               @db.VarChar(100)
+  serativo           Int                  @default(1) @db.SmallInt
+  servalor           Decimal              @db.Decimal(10, 2)
+  serduracao         DateTime             @default(dbgenerated("'00:30:00'::time without time zone")) @db.Time(6)
+  funcionarioservico funcionarioservico[]
+  empresa            empresa              @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_servico_fk")
+
+  @@id([empcodigo, sersequencia], map: "pk_servico")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model usuario {
+  usucodigo          BigInt               @id(map: "pk_usuario") @default(autoincrement())
+  usunome            String               @db.VarChar(100)
+  usuemail           String?              @unique(map: "usuario_idx_email") @db.VarChar(100)
+  usutelefone        String?              @db.VarChar(15)
+  usugoogleid        String?              @db.VarChar
+  ususenha           String?              @db.VarChar
+  usuendereco        String?              @db.VarChar(100)
+  usutipo            Int                  @default(2) @db.SmallInt
+  agendamento        agendamento[]
+  funcionarioempresa funcionarioempresa[]
+
+  @@index([usunome], map: "usuario_idx_nome")
 }

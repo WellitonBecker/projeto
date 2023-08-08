@@ -7,5 +7,10 @@ declare module '@fastify/jwt' {
       name: string
       avatarUrl: string
     }
+    empresa: {
+      codigo: number
+      nome: string
+      avatarUrl: string
+    }
   }
 }
