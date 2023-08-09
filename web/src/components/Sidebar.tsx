@@ -16,25 +16,25 @@ export default function Sidebar() {
           <div className="w-full">
             <LinkMenu href="/agendamentos">
               <div className="flex items-center justify-start ">
-                <Calendar size={18} className="mr-2" />
+                {/* <Calendar size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Agendamentos</span>
               </div>
             </LinkMenu>
             <LinkMenu href="teste">
               <div className="flex items-center justify-start ">
-                <User size={18} className="mr-2" />
+                {/* <User size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Funcionários</span>
               </div>
             </LinkMenu>
             <LinkMenu href="teste">
               <div className="flex items-center justify-start">
-                <ClipboardList size={18} className="mr-2" />
+                {/* <ClipboardList size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Serviços</span>
               </div>
             </LinkMenu>
             <LinkMenu href="teste">
               <div className="flex items-center justify-start ">
-                <PackageOpen size={18} className="mr-2" />
+                {/* <PackageOpen size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Produtos</span>
               </div>
             </LinkMenu>
@@ -42,10 +42,13 @@ export default function Sidebar() {
             <hr className="mb-4 mt-4 w-full border-gray-700" />
             <LinkMenu href="teste">
               <div className="flex items-center justify-start ">
-                <Diff size={18} className="mr-2" />
+                {/* <Diff size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Entrada/Saída</span>
               </div>
             </LinkMenu>
+            <a href='http://localhost:3000/api/empresa/out'>
+              Sair da Empresa
+            </a>
           </div>
         </nav>
       </div>

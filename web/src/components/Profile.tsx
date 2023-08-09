@@ -48,7 +48,7 @@ export function Profile({ name, avatarUrl }: props) {
           /> */}
           <div className="ml-2 flex items-end font-alt text-sm leading-snug text-gray-900">
             <p className="max-w-[140px]">{name}</p>
-            <ChevronDown className="ml-[1px] h-4 w-4" />
+            {/* <ChevronDown className="ml-[1px] h-4 w-4" /> */}
           </div>
         </button>
       </div>

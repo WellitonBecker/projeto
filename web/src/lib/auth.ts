@@ -6,6 +6,12 @@ interface User {
   name: string
   avatarUrl: string
 }
+
+interface Empresa {
+  sub: string
+  nomeEmpresa: string
+}
+
 export function getUser(): User {
   const token = cookies().get('token')?.value
 
@@ -16,4 +22,15 @@ export function getUser(): User {
   const user: User = decode(token)
 
   return user
+}
+
+export function getEmpresa():Empresa {
+  const token = cookies().get('empresa')?.value
+
+  if (!token) {
+    throw new Error('Unauthenticaded.')
+  }
+
+  const empresa: Empresa = decode(token)
+  return empresa
 }
