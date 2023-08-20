@@ -39,17 +39,22 @@ export default function ButtonNewEmpresa({ token }: props) {
     if (retorno.status != 200) {
       alert("Erro ao cadastrar empresa");
     } else {
-      setOpenModal(undefined)
+      setOpenModal(undefined);
       const { codigo } = retorno.data;
-      router.push(`/api/empresa?empresa=${parseInt(codigo)}&tokenUsuario=${token}`);
+      router.push(
+        `/api/empresa?empresa=${parseInt(codigo)}&tokenUsuario=${token}`
+      );
     }
   }
 
   return (
     <>
-      <Button onClick={() => props.setOpenModal("form-elements")}>
+      <button
+        onClick={() => props.setOpenModal("form-elements")}
+        className="m-auto w-fit rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800"
+      >
         Incluir nova Empresa
-      </Button>
+      </button>
       <Modal
         show={props.openModal === "form-elements"}
         size="md"

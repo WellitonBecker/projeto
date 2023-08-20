@@ -5,6 +5,7 @@ import multipart from '@fastify/multipart'
 import fastify from 'fastify'
 import { empresasRoute } from './routes/empresas'
 import { usuarioRoute } from './routes/usuario'
+import { servicosRoute } from './routes/servico'
 
 const app = fastify()
 
@@ -22,7 +23,7 @@ app.register(jwt, {
 
 app.register(empresasRoute)
 app.register(usuarioRoute)
-// app.register(authRoutes)
+app.register(servicosRoute)
 // app.register(uploadRoutes)
 
 app

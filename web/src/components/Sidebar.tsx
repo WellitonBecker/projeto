@@ -14,25 +14,25 @@ export default function Sidebar() {
         </div>
         <nav className="mt-6 flex gap-5">
           <div className="w-full">
-            <LinkMenu href="/agendamentos">
+            <LinkMenu href="/agendamento">
               <div className="flex items-center justify-start ">
                 {/* <Calendar size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Agendamentos</span>
               </div>
             </LinkMenu>
-            <LinkMenu href="teste">
+            <LinkMenu href="/funcionario">
               <div className="flex items-center justify-start ">
                 {/* <User size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Funcionários</span>
               </div>
             </LinkMenu>
-            <LinkMenu href="teste">
+            <LinkMenu href="/servico">
               <div className="flex items-center justify-start">
                 {/* <ClipboardList size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Serviços</span>
               </div>
             </LinkMenu>
-            <LinkMenu href="teste">
+            <LinkMenu href="/produto">
               <div className="flex items-center justify-start ">
                 {/* <PackageOpen size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Produtos</span>
@@ -40,7 +40,7 @@ export default function Sidebar() {
             </LinkMenu>
 
             <hr className="mb-4 mt-4 w-full border-gray-700" />
-            <LinkMenu href="teste">
+            <LinkMenu href="fluxocaixa">
               <div className="flex items-center justify-start ">
                 {/* <Diff size={18} className="mr-2" /> */}
                 <span className="hidden lg:block">Entrada/Saída</span>
