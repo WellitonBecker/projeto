@@ -51,19 +51,20 @@ export async function servicosRoute(app: FastifyInstance) {
   app.post("/servico", async (request) => {
     const bodySchema = z.object({
       descricao: z.string(),
-      valor: z.number(),
-      duracao: z.string().optional(),
+      valor: z.string(),
+      duracao: z.string().optional().default("30"),
+      empresa: z.string(),
     });
-    const empresa = /* request.empresa.codigo */ 1;
-
-    const { descricao, valor, duracao } = bodySchema.parse(request.body);
+    const { descricao, valor, duracao, empresa } = bodySchema.parse(
+      request.body
+    );
 
     const servico = await prisma.servico.create({
       data: {
         serdescricao: descricao,
-        servalor: valor,
-        serduracao: duracao,
-        empcodigo: empresa,
+        servalor: parseFloat(valor),
+        serduracao: parseInt(duracao),
+        empcodigo: parseInt(empresa),
       },
     });
     return {
@@ -73,5 +74,22 @@ export async function servicosRoute(app: FastifyInstance) {
       valor: servico.servalor,
       duracao: servico.serduracao,
     };
+  });
+
+  app.delete("/servico", async (request, reply) => {
+    const querySchema = z.object({
+      sequencia: z.string(),
+      empresa: z.string(),
+    });
+    const { sequencia, empresa } = querySchema.parse(request.query);
+
+    await prisma.servico.delete({
+      where: {
+        empcodigo_sersequencia: {
+          empcodigo: parseInt(empresa),
+          sersequencia: parseInt(sequencia),
+        },
+      },
+    });
   });
 }

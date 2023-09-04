@@ -5,7 +5,7 @@ const nomeProjeto = 'PROJETO TCC'
 
 export default function Sidebar() {
   return (
-    <div className="relative hidden h-screen w-60 shadow-lg lg:block">
+    <div className="hidden h-screen w-60 shadow-lg lg:block">
       {/* { dark:bg-gray-700} */}
       <div className="h-full bg-gray-400">
         <div className="flex items-center justify-center pt-6">

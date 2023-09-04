@@ -3,6 +3,7 @@ import TableServico from "./components/Table";
 import { api } from "@/lib/api";
 import { cookies } from "next/headers";
 import { getEmpresa } from "@/lib/auth";
+import ButtonNewServico from "./components/NewServico";
 
 interface Servico {
   sequencia: string;
@@ -10,6 +11,11 @@ interface Servico {
   valor: string;
   duracao: string;
 }
+
+export const metadata = {
+  title: "Serviço",
+  description: "Serviços da Empresa.",
+};
 
 export default async function Servico() {
   const breacrumb = [{ link: "", nome: "Serviços" }];
@@ -27,7 +33,10 @@ export default async function Servico() {
     <>
       <Breadcrumb items={breacrumb} />
       <div className="mt-6">
-        <TableServico itens={servicos} />
+        <div className="mb-6">
+          <ButtonNewServico token={token} codigoEmpresa={sub}/>
+        </div>
+        <TableServico itens={servicos} token={token} codigoEmpresa={sub} />
       </div>
     </>
   );

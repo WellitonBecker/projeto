@@ -1,10 +1,10 @@
-import { Menu } from 'lucide-react'
-import { Profile } from './Profile'
-import { getEmpresa, getUser } from '@/lib/auth'
+import { Menu } from "lucide-react";
+import { Profile } from "./Profile";
+import { getEmpresa, getUser } from "@/lib/auth";
 
 export default function Header() {
-  const { name, avatarUrl } = getUser()
-  
+  const { name, avatarUrl } = getUser();
+
   return (
     <div className="flex h-16 w-full flex-col bg-gray-300 md:space-y-4">
       <header className="z-40 flex h-16 w-full items-center justify-between">
@@ -20,5 +20,5 @@ export default function Header() {
         </div>
       </header>
     </div>
-  )
+  );
 }

@@ -55,7 +55,7 @@ export async function empresasRoute(app: FastifyInstance) {
     if (!empresa) {
       return "error";
     }
-    
+
     const tokenEmpresa = app.jwt.sign(
       { nomeEmpresa: empresa.empnome },
       {
@@ -107,4 +107,5 @@ export async function empresasRoute(app: FastifyInstance) {
       telefone: empresa.emptelefone,
     };
   });
+
 }

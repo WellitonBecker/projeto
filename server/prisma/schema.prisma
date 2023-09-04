@@ -12,6 +12,7 @@ model agendamento {
   agecodigo          BigInt             @id(map: "pk_agendamento") @default(autoincrement())
   agesituacao        Int                @default(1) @db.SmallInt
   agevalor           Decimal            @db.Decimal(10, 2)
+  agedatahora        DateTime           @default(now())
   usucodigofun       BigInt
   empcodigo          BigInt
   sersequencia       Int                @db.SmallInt
@@ -132,7 +133,7 @@ model servico {
   serdescricao       String               @db.VarChar(100)
   serativo           Int                  @default(1) @db.SmallInt
   servalor           Decimal              @db.Decimal(10, 2)
-  serduracao         DateTime             @default(dbgenerated("'00:30:00'::time without time zone")) @db.Time(6)
+  serduracao         Int                  @default(30)
   funcionarioservico funcionarioservico[]
   empresa            empresa              @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_servico_fk")
 

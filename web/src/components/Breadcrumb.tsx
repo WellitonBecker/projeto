@@ -18,7 +18,7 @@ export default function Breadcrumb({items}: props) {
       </BreadcrumbFlowBite.Item>
       {items.map((item, i) => {
         return (
-          <BreadcrumbFlowBite.Item href={item.link} id={i.toString()}>
+          <BreadcrumbFlowBite.Item href={item.link} key={i.toString()}>
             {item.nome}
           </BreadcrumbFlowBite.Item>
         );

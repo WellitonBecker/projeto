@@ -1,3 +1,9 @@
+export const metadata = {
+  title: 'Home',
+  description:
+    'BelleApp.',
+}
+
 export default function Home() {
   return (
     <div className="m-5 overflow-hidden rounded-lg border border-gray-200 shadow-md">
