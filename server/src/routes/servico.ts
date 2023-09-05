@@ -10,32 +10,21 @@ export async function servicosRoute(app: FastifyInstance) {
   app.get("/servicos", async (request) => {
     const querySchema = z.object({
       empresa: z.string(),
-      apenasAtivo: z.boolean().default(true),
+      apenasAtivo: z.number().default(1),
     });
 
     const { empresa, apenasAtivo } = querySchema.parse(request.query);
     let servicos;
 
-    if (apenasAtivo) {
-      servicos = await prisma.servico.findMany({
-        where: {
-          empcodigo: parseInt(empresa),
-          serativo: 1,
-        },
-        orderBy: {
-          serdescricao: "asc",
-        },
-      });
-    } else {
-      servicos = await prisma.servico.findMany({
-        where: {
-          empcodigo: parseInt(empresa),
-        },
-        orderBy: {
-          serdescricao: "asc",
-        },
-      });
-    }
+    servicos = await prisma.servico.findMany({
+      where: {
+        empcodigo: parseInt(empresa),
+        serativo: apenasAtivo,
+      },
+      orderBy: {
+        serdescricao: "asc",
+      },
+    });
 
     return servicos.map((servico) => {
       return {

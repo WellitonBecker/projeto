@@ -32,10 +32,11 @@ export default async function Servico() {
   return (
     <>
       <Breadcrumb items={breacrumb} />
-      <div className="mt-6">
-        <div className="mb-6">
-          <ButtonNewServico token={token} codigoEmpresa={sub}/>
-        </div>
+      <div className="mb-4 mt-4">
+        <ButtonNewServico codigoEmpresa={sub} token={token} />
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
         <TableServico itens={servicos} token={token} codigoEmpresa={sub} />
       </div>
     </>

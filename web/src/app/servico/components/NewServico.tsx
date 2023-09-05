@@ -51,7 +51,7 @@ export default function ButtonNewServico({ token, codigoEmpresa }: props) {
         onClick={() => props.setOpenModal("form-elements")}
         className="m-auto w-fit rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800"
       >
-        Incluir novo Serviço
+        Incluir Serviço
       </button>
       <Modal
         show={props.openModal === "form-elements"}

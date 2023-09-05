@@ -34,18 +34,16 @@ export default function TableServico({ token, codigoEmpresa, itens }: props) {
 
   function criaLinhas(indice: number, item?: itemProps) {
     return (
-      <Table.Row
-        className="overflow-auto bg-white dark:border-gray-700 dark:bg-gray-800"
-        id={item?.sequencia}
-        key={indice}
-      >
-        <Table.Cell className="max-md:hidden">{item?.sequencia}</Table.Cell>
-        <Table.Cell>{item?.descricao}</Table.Cell>
-        <Table.Cell>{item?.valor}</Table.Cell>
-        <Table.Cell>{item?.duracao}</Table.Cell>
-        <Table.Cell>
+      <tr className="hover:bg-gray-100" key={indice}>
+        <td className="w-[10%] border py-1 text-center max-md:hidden">
+          {item?.sequencia}
+        </td>
+        <td className="border px-2 py-1">{item?.descricao}</td>
+        <td className="w-[5%] border py-1 text-center">{item?.valor}</td>
+        <td className="w-[5%] border py-1 text-center">{item?.duracao}</td>
+        <td className="w-[12%] border py-1 text-center">
           {item?.sequencia != undefined && (
-            <div className="grid max-w-[100px] grid-cols-2 max-md:grid-cols-1">
+            <div className="grid grid-cols-2 items-center max-md:grid-cols-1">
               <a
                 className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                 href="/tables"
@@ -60,29 +58,30 @@ export default function TableServico({ token, codigoEmpresa, itens }: props) {
               </a>
             </div>
           )}
-        </Table.Cell>
-      </Table.Row>
+        </td>
+      </tr>
     );
   }
   let indiceLinha = 0;
-
   return (
-    <Table hoverable>
-      <Table.Head>
-        <Table.HeadCell className="max-md:hidden">Sequencia</Table.HeadCell>
-        <Table.HeadCell>Descrição</Table.HeadCell>
-        <Table.HeadCell>Valor</Table.HeadCell>
-        <Table.HeadCell>Duração</Table.HeadCell>
-        <Table.HeadCell>
-          <span className="sr-only">Ações</span>
-        </Table.HeadCell>
-      </Table.Head>
-      <Table.Body className="divide-y overflow-y-auto">
+    <table className="w-full table-auto">
+      <thead className="sticky bg-gray-300">
+        <tr>
+          <th className="w-[10%] border px-2 py-2 max-md:hidden">Sequência</th>
+          <th className="border px-4 py-2">Descrição</th>
+          <th className="w-[5%] border px-4 py-2">Valor</th>
+          <th className="w-[5%] border px-4 py-2">Duração</th>
+          <th className="w-[12%] border px-4 py-2">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
         {itens.map((item) => criaLinhas(++indiceLinha, item))}
-        {Array.from({ length: 15 - itens.length }).map(() =>
-          criaLinhas(++indiceLinha)
-        )}
-      </Table.Body>
-    </Table>
+        {itens.map((item) => criaLinhas(++indiceLinha, item))}
+        {itens.map((item) => criaLinhas(++indiceLinha, item))}
+        {itens.map((item) => criaLinhas(++indiceLinha, item))}
+        {itens.map((item) => criaLinhas(++indiceLinha, item))}
+        {itens.map((item) => criaLinhas(++indiceLinha, item))}
+      </tbody>
+    </table>
   );
 }

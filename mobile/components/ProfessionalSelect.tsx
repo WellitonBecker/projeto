@@ -35,7 +35,7 @@ const ProfessionalSelect = ({ empresa, servico, onSelect }) => {
 
   return (
     <View>
-      <Text>Profissional:</Text>
+      <Text>Profissional: *</Text>
       <Picker
         style={styles.picker}
         selectedValue={selectedProfissional}
@@ -63,7 +63,7 @@ const ProfessionalSelect = ({ empresa, servico, onSelect }) => {
 
 const styles = StyleSheet.create({
   picker: {
-    backgroundColor: "#fff",
+    backgroundColor: "gray",
   },
 });
 

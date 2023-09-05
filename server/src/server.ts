@@ -8,6 +8,7 @@ import { usuarioRoute } from "./routes/usuario";
 import { servicosRoute } from "./routes/servico";
 import { agendamentosRoutes } from "./routes/agendamentos";
 import { newAgendamentoRoutes } from "./routes/newAgendamento";
+import { funcionarioRoutes } from "./routes/funcionario";
 
 const app = fastify();
 
@@ -28,6 +29,7 @@ app.register(usuarioRoute);
 app.register(servicosRoute);
 app.register(agendamentosRoutes);
 app.register(newAgendamentoRoutes);
+app.register(funcionarioRoutes);
 // app.register(uploadRoutes)
 
 app

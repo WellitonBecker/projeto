@@ -1,7 +1,7 @@
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 export default function MainContent({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-white p-6">{children}</div>
-  )
+    <main className="flex flex-1 flex-col overflow-hidden p-4">{children}</main>
+  );
 }

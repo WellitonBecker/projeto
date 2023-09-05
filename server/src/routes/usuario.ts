@@ -68,4 +68,32 @@ export async function usuarioRoute(app: FastifyInstance) {
       };
     }
   });
+
+  app.get("/usuario/search", async (request, response) => {
+    const querySchema = z.object({
+      nome: z.string(),
+    });
+
+    const { nome } = querySchema.parse(request.query);
+    try {
+      const usuarios = await prisma.usuario.findMany({
+        where: {
+          usunome: {
+            search: nome,
+          },
+        },
+        orderBy: {
+          usunome: "asc",
+        },
+      });
+      return usuarios.map((usuario) => {
+        return {
+          codigo: usuario.usucodigo.toString(),
+          nome: usuario.usunome,
+        };
+      });
+    } catch (error) {
+      return response.status(500).send(error);
+    }
+  });
 }

@@ -1,7 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { request } from "http";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
+
+interface Horarios {
+  hora: string;
+}
 
 export async function newAgendamentoRoutes(app: FastifyInstance) {
   app.get("/novoagendamento/empresas", async (request) => {
@@ -61,7 +65,7 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
           include: {
             usuario: {
               select: {
-                usucodigo:true,
+                usucodigo: true,
                 usunome: true,
               },
             },
@@ -83,5 +87,54 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
         ativo: Boolean(profissional.fusativo),
       };
     });
+  });
+
+  app.get("/novoagendamento/horarios", async (request, response) => {
+    const querySchema = z.object({
+      empresa: z.string(),
+      funcionario: z.string(),
+      data: z.string(),
+    });
+
+    try {
+      const { empresa, funcionario, data } = querySchema.parse(request.query);
+      try {
+        const sql = `
+        with horarios as (
+          SELECT generate_series(
+              '2023-09-05 08:00:00'::timestamp, -- Data e hora inicial
+              '2023-09-05 18:00:00'::timestamp, -- Data e hora final
+              '30 minutes'::interval             -- Intervalo de 30 minutos
+          )::TIME hora
+          )
+          
+          select hora::text
+            from horarios
+           where not exists(
+            select 1
+              from agendamento
+             where agendamento.agedatahora::time = horarios.hora
+               and agendamento.agesituacao = 1
+               and agendamento.empcodigo = ${parseInt(empresa)}
+               and agendamento.usucodigofun = ${parseInt(funcionario)}
+               and agendamento.agedatahora::date = '${data}'
+           )
+        `;
+        const result = await prisma.$queryRaw<Horarios[]>(Prisma.raw(sql));
+
+        const horarios = new Array();
+        result.forEach((horario) => {
+          horarios.push(horario.hora.substring(0, 5));
+        });
+
+        return horarios;
+      } catch (error) {
+        return response.status(500).send(error);
+      } finally {
+        await prisma.$disconnect();
+      }
+    } catch (error) {
+      return response.status(500).send(error);
+    }
   });
 }
