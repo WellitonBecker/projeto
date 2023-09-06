@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import dayjs from "dayjs";
 
 interface Horarios {
   hora: string;
@@ -98,6 +99,8 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
 
     try {
       const { empresa, funcionario, data } = querySchema.parse(request.query);
+      const dataSplit = data.split('/')
+      const dataFormatada = `${dataSplit[2]}-${dataSplit[1]}-${dataSplit[0]}`
       try {
         const sql = `
         with horarios as (
@@ -111,14 +114,19 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
           select hora::text
             from horarios
            where not exists(
-            select 1
-              from agendamento
-             where agendamento.agedatahora::time = horarios.hora
-               and agendamento.agesituacao = 1
-               and agendamento.empcodigo = ${parseInt(empresa)}
-               and agendamento.usucodigofun = ${parseInt(funcionario)}
-               and agendamento.agedatahora::date = '${data}'
-           )
+                select 1
+                  from agendamento
+                where (agendamento.agedatahora::time - '03:00')::time = horarios.hora
+                  and agendamento.agesituacao = 1
+                  and agendamento.empcodigo = ${parseInt(empresa)}
+                  and agendamento.usucodigofun = ${parseInt(funcionario)}
+                  and agendamento.agedatahora::date = '${dataFormatada}'
+                  )
+             and horarios.hora not in ('12:00', '12:30')
+             and case when current_date = '${dataFormatada}'
+                      then (current_time::time - '03:00')::time < horarios.hora
+                      else true
+                 end
         `;
         const result = await prisma.$queryRaw<Horarios[]>(Prisma.raw(sql));
 

@@ -4,9 +4,9 @@ import * as SecureStore from "expo-secure-store";
 import decode from "jwt-decode";
 
 interface User {
-  sub: string
-  name: string
-  avatarUrl: string
+  sub: string;
+  name: string;
+  avatarUrl: string;
 }
 
 export default function Header() {
@@ -21,7 +21,7 @@ export default function Header() {
   if (!isToken) {
     return <></>;
   }
-  const user:User = decode(token);
+  const user: User = decode(token);
   return (
     <View style={styles.header}>
       <Text style={styles.username}>Olá, {user.name}</Text>
@@ -37,7 +37,8 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1 / 20,
+    // flex: 1 / 20,
+    minHeight: "10%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

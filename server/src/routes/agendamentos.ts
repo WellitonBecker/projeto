@@ -21,9 +21,18 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                 empresa: {
                   select: {
                     empnome: true,
-                    empendereco: true,
                   },
                 },
+                usuario: {
+                  select: {
+                    usunome: true,
+                  },
+                },
+              },
+            },
+            servico: {
+              select: {
+                serdescricao: true,
               },
             },
           },
@@ -35,13 +44,15 @@ export async function agendamentosRoutes(app: FastifyInstance) {
     });
 
     return agendamentos.map((agendamento) => {
-      const empresa = agendamento.funcionarioservico.funcionarioempresa.empresa;
       return {
-        nomeEmpresa: empresa.empnome,
-        enderecoEmpresa: empresa.empendereco,
+        nomeEmpresa:
+          agendamento.funcionarioservico.funcionarioempresa.empresa.empnome,
+        servico: agendamento.funcionarioservico.servico.serdescricao,
+        funcionario:
+          agendamento.funcionarioservico.funcionarioempresa.usuario.usunome,
         valor: agendamento.agevalor,
         situacao: agendamento.agesituacao,
-        dataHora: agendamento.agedatahora.toLocaleDateString(),
+        dataHora: agendamento.agedatahora.toLocaleString(),
       };
     });
   });
@@ -52,7 +63,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       servico: z.string(),
       usuario: z.string(),
       empresa: z.string(),
-      dataHora: z.date(),
+      dataHora: z.coerce.date(),
     });
 
     const { funcionario, servico, usuario, empresa, dataHora } =

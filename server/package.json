@@ -25,6 +25,7 @@
     "@fastify/multipart": "^7.6.0",
     "@prisma/client": "^4.15.0",
     "axios": "^1.4.0",
+    "dayjs": "^1.11.9",
     "fastify": "^4.17.0",
     "zod": "^3.21.4"
   }

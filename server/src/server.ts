@@ -1,4 +1,5 @@
 import "dotenv/config";
+import './lib/dayjs'
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import multipart from "@fastify/multipart";

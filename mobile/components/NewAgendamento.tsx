@@ -39,6 +39,18 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
     ) {
       Alert.alert("Erro", "Necessário que todos os campos sejam selecionados.");
     } else {
+      const dataSplit = selectedDate.toLocaleDateString().split("/");
+      const horarioSplit = selectedHorario.split(":");
+
+      const dataFormatada = new Date(
+        parseInt(dataSplit[2]),
+        parseInt(dataSplit[1]) - 1,
+        parseInt(dataSplit[0]),
+        parseInt(horarioSplit[0]),
+        parseInt(horarioSplit[1]),
+        parseInt("00")
+      );
+
       const response = await api.post(
         "/agendamento",
         {
@@ -46,7 +58,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
           servico: selectedService,
           usuario: user.sub,
           empresa: selectedCompany,
-          dataHora: `${selectedDate.toLocaleDateString()} ${selectedHorario}`,
+          dataHora: `${dataFormatada.toISOString()}`,
         },
         {
           headers: {
@@ -61,8 +73,8 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
   }
 
   async function loadHorarios() {
+    setHorariosDisponiveis([]);
     if (!selectedCompany || !selectedProfessional || !selectedDate) {
-      setHorariosDisponiveis([]);
       return;
     }
     const response = await api.get("/novoagendamento/horarios", {
@@ -98,7 +110,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
         <DataPicker onSelect={setSelectedDate} />
       </View>
       <View style={{ flex: 2 / 3 }}>
-        <Text>Data: *</Text>
+        <Text>Horário: *</Text>
         <View style={{ backgroundColor: "#3b3c3d", flex: 1 }}>
           <TimePickerList
             data={horariosDisponiveis}
