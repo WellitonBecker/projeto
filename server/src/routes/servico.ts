@@ -65,6 +65,41 @@ export async function servicosRoute(app: FastifyInstance) {
     };
   });
 
+  app.patch("/servico", async (request) => {
+    const bodySchema = z.object({
+      descricao: z.string(),
+      valor: z.string(),
+      duracao: z.string().optional().default("30"),
+      empresa: z.string(),
+      ativo: z.number().min(0).max(1),
+      sequencia: z.string(),
+    });
+    const { descricao, valor, duracao, empresa, sequencia, ativo } =
+      bodySchema.parse(request.body);
+
+    const servico = await prisma.servico.update({
+      data: {
+        serdescricao: descricao,
+        servalor: parseFloat(valor),
+        serduracao: parseInt(duracao),
+        serativo: ativo,
+      },
+      where: {
+        empcodigo_sersequencia: {
+          empcodigo: parseInt(empresa),
+          sersequencia: parseInt(sequencia),
+        },
+      },
+    });
+    return {
+      empresa: servico.empcodigo.toString(),
+      sequencia: servico.sersequencia.toString(),
+      descricao: servico.serdescricao,
+      valor: servico.servalor,
+      duracao: servico.serduracao,
+    };
+  });
+
   app.delete("/servico", async (request, reply) => {
     const querySchema = z.object({
       sequencia: z.string(),
@@ -80,5 +115,33 @@ export async function servicosRoute(app: FastifyInstance) {
         },
       },
     });
+  });
+
+  app.get("/servico/busca", async (request) => {
+    console.log("Chegou");
+
+    const querySchema = z.object({
+      empresa: z.string(),
+      sequencia: z.string(),
+    });
+
+    const { empresa, sequencia } = querySchema.parse(request.query);
+    console.log(empresa, "--", sequencia);
+    const servico = await prisma.servico.findUnique({
+      where: {
+        empcodigo_sersequencia: {
+          empcodigo: parseInt(empresa),
+          sersequencia: parseInt(sequencia),
+        },
+      },
+    });
+
+    return {
+      sequencia: servico?.sersequencia.toString(),
+      descricao: servico?.serdescricao,
+      duracao: servico?.serduracao,
+      valor: servico?.servalor,
+      ativo: servico?.serativo,
+    };
   });
 }

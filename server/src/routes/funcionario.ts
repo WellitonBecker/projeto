@@ -67,16 +67,17 @@ export async function funcionarioRoutes(app: FastifyInstance) {
       },
     });
 
-    servicos.length > 0 && servicos.map(async (servico) => {
-      await prisma.funcionarioservico.create({
-        data: {
-          sersequencia: servico,
-          empcodigo: parseInt(empresa),
-          usucodigo: parseInt(funcionario),
-          fusativo: 1,
-        },
+    servicos.length > 0 &&
+      servicos.map(async (servico) => {
+        await prisma.funcionarioservico.create({
+          data: {
+            sersequencia: servico,
+            empcodigo: parseInt(empresa),
+            usucodigo: parseInt(funcionario),
+            fusativo: 1,
+          },
+        });
       });
-    });
 
     return {
       empresa: funcioario.empcodigo.toString(),
@@ -101,5 +102,90 @@ export async function funcionarioRoutes(app: FastifyInstance) {
         },
       },
     });
+  });
+
+  app.patch("/funcionario", async (request) => {
+    const bodySchema = z.object({
+      funcionario: z.string(),
+      salario: z.string().optional(),
+      tipo: z.number().min(1).max(3).optional().default(2),
+      empresa: z.string(),
+      ativo: z.number().min(0).max(1).optional().default(1),
+      servicos: z.array(z.number()).optional().default([]),
+    });
+    const { funcionario, salario, tipo, empresa, servicos, ativo } =
+      bodySchema.parse(request.body);
+
+    const response = await prisma.funcionarioempresa.update({
+      data: {
+        fueativo: ativo,
+        fuetipo: tipo,
+        fuesalario: salario,
+      },
+      where: {
+        usucodigo_empcodigo: {
+          empcodigo: parseInt(empresa),
+          usucodigo: parseInt(funcionario),
+        },
+      },
+    });
+
+    return {
+      empresa: response.empcodigo.toString(),
+      funcioario: response.usucodigo.toString(),
+      tipo: response.fuetipo == 1 ? "Administrador" : "Funcionário",
+      salario: response.fuesalario,
+    };
+  });
+
+  app.get("/funcionario/busca", async (request) => {
+    const querySchema = z.object({
+      empresa: z.string(),
+      funcionario: z.string(),
+    });
+
+    const { empresa, funcionario } = querySchema.parse(request.query);
+    const responseFuncionario = await prisma.funcionarioempresa.findUnique({
+      where: {
+        usucodigo_empcodigo: {
+          empcodigo: parseInt(empresa),
+          usucodigo: parseInt(funcionario),
+        },
+      },
+      include: {
+        usuario: {
+          select: {
+            usunome: true,
+          },
+        },
+        funcionarioservico: {
+          include: {
+            servico: {
+              select: {
+                sersequencia: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (responseFuncionario != undefined) {
+      return {
+        codigo: responseFuncionario.usucodigo.toString(),
+        nome: responseFuncionario.usuario.usunome,
+        salario: new Number(responseFuncionario.fuesalario)
+          .toFixed(2)
+          .replace(".", ","),
+        tipo:
+          responseFuncionario.fuetipo == 1 ? "Administrador" : "Funcionário",
+        ativo: responseFuncionario.fueativo ? "Sim" : "Não",
+        servicos: responseFuncionario.funcionarioservico.map(
+          (funcioarioServico) => {
+            return funcioarioServico.servico.sersequencia;
+          }
+        ),
+      };
+    }
   });
 }

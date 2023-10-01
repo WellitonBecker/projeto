@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { request } from "http";
 
 export enum Empresa {
   // eslint-disable-next-line no-unused-vars
@@ -18,9 +19,10 @@ export async function empresasRoute(app: FastifyInstance) {
     const empresas = await prisma.empresa.findMany({
       where: {
         funcionarioempresa: {
-          every: {
+          some: {
             usucodigo: parseInt(request.user.sub),
-            fueativo: Empresa.TIPO_ADMIN,
+            fuetipo: Empresa.TIPO_ADMIN,
+            fueativo: 1,
           },
         },
       },
@@ -28,7 +30,6 @@ export async function empresasRoute(app: FastifyInstance) {
         empnome: "asc",
       },
     });
-
     return empresas.map((empresa) => {
       return {
         codigo: empresa.empcodigo.toString(),
@@ -107,5 +108,4 @@ export async function empresasRoute(app: FastifyInstance) {
       telefone: empresa.emptelefone,
     };
   });
-
 }

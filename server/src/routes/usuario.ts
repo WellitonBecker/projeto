@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { request } from "http";
 import { usuario } from "@prisma/client";
+import { error } from "console";
 
 export async function usuarioRoute(app: FastifyInstance) {
   app.get("/usuario/login", async (request) => {
@@ -35,7 +36,19 @@ export async function usuarioRoute(app: FastifyInstance) {
     }
   });
 
-  app.post("/usuario/register", async (request) => {
+  app.get("/usuario/all", async (request) => {
+    const usuarios = await prisma.usuario.findMany({
+      orderBy: {
+        usunome: "asc"
+      },
+    });
+
+    return usuarios.map((usuario) => {
+      return { nome: usuario.usunome, email: usuario.usuemail };
+    });
+  });
+
+  app.post("/usuario/register", async (request, response) => {
     const bodySchema = z.object({
       firstName: z.string(),
       lastName: z.string(),
@@ -47,25 +60,30 @@ export async function usuarioRoute(app: FastifyInstance) {
       request.body
     );
 
-    const usuario = await prisma.usuario.create({
-      data: {
-        usunome: `${firstName} ${lastName}`,
-        usuemail: email,
-        ususenha: password,
-      },
-    });
-    if (usuario != null) {
-      const token = app.jwt.sign(
-        { name: usuario.usunome },
-        {
-          sub: usuario.usucodigo.toString(),
-          expiresIn: "30 days",
-        }
-      );
+    try {
+      const usuario = await prisma.usuario.create({
+        data: {
+          usunome: `${firstName} ${lastName}`,
+          usuemail: email,
+          ususenha: password,
+        },
+      });
+      if (usuario != null) {
+        const token = app.jwt.sign(
+          { name: usuario.usunome },
+          {
+            sub: usuario.usucodigo.toString(),
+            expiresIn: "30 days",
+          }
+        );
 
-      return {
-        token,
-      };
+        return {
+          token,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send(error);
     }
   });
 

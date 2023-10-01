@@ -12,12 +12,14 @@ interface ListaServicoProps {
   onSelect: (servico: number) => void;
   empresa: string;
   token: string | undefined;
+  selecionados?: Array<number>;
 }
 
 export default function ListaServicoCheckBox({
   onSelect,
   empresa,
   token,
+  selecionados,
 }: ListaServicoProps) {
   const [servicos, setServicos] = useState<Servico[]>([]);
 
@@ -40,11 +42,16 @@ export default function ListaServicoCheckBox({
   return (
     <div className="flex max-w-md flex-col gap-4" id="checkbox">
       {servicos.map((servico) => {
+        const servicoSelecionado = selecionados?.includes(
+          parseInt(servico.sequencia)
+        );
+
         return (
           <div className="flex items-center gap-2">
             <Checkbox
               id={`servico_${servico.sequencia}`}
               onChange={(e) => onSelect(parseInt(servico.sequencia))}
+              checked={servicoSelecionado}
             />
             <Label className="flex" htmlFor={`servico_${servico.sequencia}`}>
               <p>{servico.descricao}</p>

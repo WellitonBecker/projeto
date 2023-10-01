@@ -69,7 +69,7 @@ export function Home() {
         isVisible={isModalVisible}
         style={{
           width: "100%",
-          backgroundColor: "rgba(255, 255, 255)",
+          backgroundColor: "#ffffff",
           margin: 0,
           paddingLeft: 20,
           justifyContent: "center",

@@ -1,7 +1,7 @@
-import { User, ClipboardList, PackageOpen, Calendar, Diff } from 'lucide-react'
-import LinkMenu from './LinkMenu'
+import { User, ClipboardList, PackageOpen, Calendar, Diff } from "lucide-react";
+import LinkMenu from "./LinkMenu";
 
-const nomeProjeto = 'PROJETO TCC'
+const nomeProjeto = "PROJETO TCC";
 
 export default function Sidebar() {
   return (
@@ -32,26 +32,23 @@ export default function Sidebar() {
                 <span className="hidden lg:block">Serviços</span>
               </div>
             </LinkMenu>
-            <LinkMenu href="/produto">
+            <LinkMenu href="/usuario">
               <div className="flex items-center justify-start ">
                 {/* <PackageOpen size={18} className="mr-2" /> */}
-                <span className="hidden lg:block">Produtos</span>
+                <span className="hidden lg:block">Usuários</span>
               </div>
             </LinkMenu>
 
             <hr className="mb-4 mt-4 w-full border-gray-700" />
-            <LinkMenu href="fluxocaixa">
+            <LinkMenu href="http://localhost:3000/api/empresa/out">
               <div className="flex items-center justify-start ">
                 {/* <Diff size={18} className="mr-2" /> */}
-                <span className="hidden lg:block">Entrada/Saída</span>
+                <span className="hidden lg:block">Sair da Empresa</span>
               </div>
             </LinkMenu>
-            <a href='http://localhost:3000/api/empresa/out'>
-              Sair da Empresa
-            </a>
           </div>
         </nav>
       </div>
     </div>
-  )
+  );
 }

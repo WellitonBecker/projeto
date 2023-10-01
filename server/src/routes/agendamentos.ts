@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
-import { request } from "http";
 import { z } from "zod";
 
 export async function agendamentosRoutes(app: FastifyInstance) {
@@ -96,5 +95,107 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       valor: agendamento.agevalor,
       dataHora: agendamento.agedatahora,
     };
+  });
+
+  app.get("/agendamentos/empresa", async (request) => {
+    let agendamentos = [];
+
+    const querySchema = z.object({
+      empresa: z.string(),
+    });
+
+    const { empresa } = querySchema.parse(request.query);
+    const funcionarioEmpresa = await prisma.funcionarioempresa.findUnique({
+      where: {
+        usucodigo_empcodigo: {
+          empcodigo: parseInt(empresa),
+          usucodigo: parseInt(request.user.sub),
+        },
+      },
+    });
+
+    if (funcionarioEmpresa?.fuetipo == 1) {
+      agendamentos = await prisma.agendamento.findMany({
+        where: {
+          empcodigo: parseInt(empresa),
+        },
+        include: {
+          funcionarioservico: {
+            include: {
+              funcionarioempresa: {
+                include: {
+                  usuario: {
+                    select: {
+                      usunome: true,
+                    },
+                  },
+                },
+              },
+              servico: {
+                select: {
+                  serdescricao: true,
+                },
+              },
+            },
+          },
+          usuario: {
+            select: {
+              usunome: true,
+            },
+          },
+        },
+        orderBy: {
+          // agedatahora: "asc",
+        },
+      });
+    } else {
+      agendamentos = await prisma.agendamento.findMany({
+        where: {
+          empcodigo: parseInt(empresa),
+          usucodigofun: parseInt(request.user.sub),
+        },
+        include: {
+          funcionarioservico: {
+            include: {
+              funcionarioempresa: {
+                include: {
+                  usuario: {
+                    select: {
+                      usunome: true,
+                    },
+                  },
+                },
+              },
+              servico: {
+                select: {
+                  serdescricao: true,
+                },
+              },
+            },
+          },
+          usuario: {
+            select: {
+              usunome: true,
+            },
+          },
+        },
+        orderBy: {
+          // agedatahora: "asc",
+        },
+      });
+    }
+
+    return agendamentos.map((agendamento) => {
+      return {
+        cliente: agendamento.usuario.usunome,
+        servico: agendamento.funcionarioservico.servico.serdescricao,
+        funcionario:
+          agendamento.funcionarioservico.funcionarioempresa.usuario.usunome,
+        valor: agendamento.agevalor,
+        situacao: agendamento.agesituacao,
+        dataHora: agendamento.agedatahora,
+        codigo: agendamento.agecodigo.toString(),
+      };
+    });
   });
 }
