@@ -1,9 +1,9 @@
-'use client'
+"use client";
 // import { getUser } from '@/lib/auth'
-import Image from 'next/image'
-import { ChevronDown } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
-import UserMenu from './UserMenu'
+import Image from "next/image";
+import { ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import UserMenu from "./UserMenu";
 
 interface props {
   name: string;
@@ -11,26 +11,26 @@ interface props {
 }
 
 export function Profile({ name, avatarUrl }: props) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const menuRef = useRef(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleToggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const handleClickOutside = (event: any) => {
-    if (menuRef.current) {
-      setIsMenuOpen(false)
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setIsMenuOpen(false);
     }
-  }
+  };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="relative">
@@ -56,5 +56,5 @@ export function Profile({ name, avatarUrl }: props) {
       {isMenuOpen && <UserMenu menuRef={menuRef} />}
       {/* <UserMenu menuRef={menuRef} /> */}
     </div>
-  )
+  );
 }

@@ -1,16 +1,16 @@
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { MutableRefObject } from 'react'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { RefObject } from "react";
 
 interface props {
-  menuRef: MutableRefObject<null>
+  menuRef: RefObject<HTMLDivElement>;
 }
 
 export default function UserMenu({ menuRef }: props) {
-  const router = useRouter()
+  const router = useRouter();
 
   function onClickSair() {
-    router.push('/api/auth/logout')
+    router.push("/api/auth/logout");
   }
   return (
     <div
@@ -18,7 +18,7 @@ export default function UserMenu({ menuRef }: props) {
       className="absolute right-0 z-10 w-32 rounded-lg border border-gray-100  bg-white font-alt shadow-lg"
     >
       <a
-        href="/meu-perfil"
+        href="/perfil"
         className="block rounded-t-lg px-4 py-2 text-gray-700 hover:bg-gray-50"
       >
         Meu Perfil
@@ -31,5 +31,5 @@ export default function UserMenu({ menuRef }: props) {
         Sair
       </a>
     </div>
-  )
+  );
 }
