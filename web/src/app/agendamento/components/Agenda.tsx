@@ -42,22 +42,13 @@ export default function Agenda({
 
   useEffect(() => {
     setAgendamentos([]);
-    if (!apenasDisponivel) {
-      if (
-        funcionarioSelecionado == "" ||
-        agendamentosFunc[funcionarioSelecionado] == undefined
-      ) {
-        return;
-      }
-      setAgendamentos(agendamentosFunc[funcionarioSelecionado]);
-    } else {
-      if (
-        funcionarioSelecionado == "" ||
-        agendamentosFuncDisp[funcionarioSelecionado] == undefined
-      ) {
-        return;
-      }
-      setAgendamentos(agendamentosFuncDisp[funcionarioSelecionado]);
+
+    const agendamentos = !apenasDisponivel
+      ? agendamentosFunc[funcionarioSelecionado]
+      : agendamentosFuncDisp[funcionarioSelecionado];
+
+    if (agendamentos != undefined) {
+      setAgendamentos(agendamentos);
     }
   }, [funcionarioSelecionado, apenasDisponivel]);
 
@@ -121,7 +112,9 @@ export default function Agenda({
               type="checkbox"
               className="form-checkbox border-gray-500 text-gray-200"
               value={+apenasDisponivel}
-              onClick={() => setApenasDisponivel(!apenasDisponivel)}
+              onClick={() => {
+                setApenasDisponivel(!apenasDisponivel);
+              }}
             />
           </a>
           <select
