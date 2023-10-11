@@ -1,16 +1,16 @@
 import { User, ClipboardList, PackageOpen, Calendar, Diff } from "lucide-react";
 import LinkMenu from "./LinkMenu";
-
-const nomeProjeto = "PROJETO TCC";
+import { getEmpresa } from "@/lib/auth";
 
 export default function Sidebar() {
+  const empresa = getEmpresa()
   return (
     <div className="hidden h-screen w-60 shadow-lg lg:block">
       {/* { dark:bg-gray-700} */}
       <div className="h-full bg-gray-400">
         <div className="flex items-center justify-center pt-6">
           {/* { dark:text-white} */}
-          <p className="text-xl font-bold text-gray-50">{nomeProjeto}</p>
+          <p className="text-xl font-bold text-gray-50">{empresa.nomeEmpresa}</p>
         </div>
         <nav className="mt-6 flex gap-5">
           <div className="w-full">

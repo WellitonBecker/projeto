@@ -1,10 +1,11 @@
 "use client";
 
 import { api } from "@/lib/api";
-import { Table } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import UpdateServico from "./UpdateServico";
 import { useState } from "react";
+import ButtonUpdate from "@/components/ButtonUpdate";
+import ButtonDelete from "@/components/ButtonDelete";
 
 interface itemProps {
   sequencia: string;
@@ -50,21 +51,17 @@ export default function TableServico({ token, codigoEmpresa, itens }: props) {
         <td className="w-[5%] border py-1 text-center">{item?.duracao}</td>
         <td className="w-[12%] border py-1 text-center">
           {item?.sequencia != undefined && (
-            <div className="grid grid-cols-2 items-center max-md:grid-cols-1">
-              <a
-                className="font-medium text-cyan-600 hover:cursor-pointer hover:underline  dark:text-cyan-500"
+            <div className="grid grid-cols-2 max-md:grid-cols-1">
+              <ButtonUpdate
+                title="Serviço"
                 onClick={() => {
                   setServicoSelected(item?.sequencia);
                 }}
-              >
-                <p>Alterar</p>
-              </a>
-              <a
-                className="font-medium text-red-600 hover:cursor-pointer hover:underline"
+              />
+              <ButtonDelete
+                title="Serviço"
                 onClick={() => excluirServico(item.sequencia)}
-              >
-                <p>Excluir</p>
-              </a>
+              />
             </div>
           )}
         </td>

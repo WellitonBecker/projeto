@@ -1,27 +1,73 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid"; // a plugin!
+import Breadcrumb from "@/components/Breadcrumb";
 
 interface Agendamento {
   codigo: string;
   cliente: string;
   servico: string;
   funcionario: string;
+  codigoFuncionario: string;
   valor: string;
   situacao: string;
   dataHora: string;
 }
 
-interface AgendaProps {
-  itens: Agendamento[];
+interface Funcionario {
+  codigo: string;
+  nome: string;
 }
 
-export default function Agenda({ itens }: AgendaProps) {
+interface AgendaProps {
+  funcionarios: Array<Funcionario>;
+  agendamentosFunc: {
+    [codigoFuncionario: string]: Array<Agendamento>;
+  };
+  agendamentosFuncDisp: {
+    [codigoFuncionario: string]: Array<Agendamento>;
+  };
+}
+
+export default function Agenda({
+  funcionarios,
+  agendamentosFunc,
+  agendamentosFuncDisp,
+}: AgendaProps) {
+  const breacrumb = [{ link: "", nome: "Agendamento" }];
+  const [agendamentos, setAgendamentos] = useState<Array<Agendamento>>([]);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState("");
+  const [apenasDisponivel, setApenasDisponivel] = useState(false);
+
+  useEffect(() => {
+    setAgendamentos([]);
+    if (!apenasDisponivel) {
+      if (
+        funcionarioSelecionado == "" ||
+        agendamentosFunc[funcionarioSelecionado] == undefined
+      ) {
+        return;
+      }
+      setAgendamentos(agendamentosFunc[funcionarioSelecionado]);
+    } else {
+      if (
+        funcionarioSelecionado == "" ||
+        agendamentosFuncDisp[funcionarioSelecionado] == undefined
+      ) {
+        return;
+      }
+      setAgendamentos(agendamentosFuncDisp[funcionarioSelecionado]);
+    }
+  }, [funcionarioSelecionado, apenasDisponivel]);
+
   const listaEventos = new Array();
-  itens.map((item) => {
+  agendamentos.map((item) => {
     let cor;
     switch (parseInt(item.situacao)) {
+      case 0:
+        cor = "orange";
+        break;
       case 1:
         cor = "blue";
         break;
@@ -36,7 +82,10 @@ export default function Agenda({ itens }: AgendaProps) {
     dataFim.setMinutes(dataFim.getMinutes() + 30);
     listaEventos.push({
       id: item.codigo,
-      title: `${item.servico} - ${item.cliente}`,
+      title:
+        item.codigo == null
+          ? "Disponível"
+          : `${item.servico} - ${item.cliente}`,
       date: item.dataHora,
       end: dataFim,
       backgroundColor: cor,
@@ -55,32 +104,67 @@ export default function Agenda({ itens }: AgendaProps) {
   function clickEvent(eventInfo: any) {
     alert(JSON.stringify(eventInfo));
   }
+
+  const handleSelecionarOpcao = (event: any) => {
+    const opcao = event.target.value;
+    setFuncionarioSelecionado(opcao);
+  };
+
   return (
-    <FullCalendar
-      height={"100%"}
-      plugins={[timeGridPlugin]}
-      initialView="timeGridWeek"
-      weekends={false}
-      eventContent={renderEventContent}
-      locale={"PT-BR"}
-      allDaySlot={false}
-      nowIndicator={true}
-      initialDate={new Date()}
-      slotMinTime={{ hour: 7 }}
-      slotMaxTime={{ hour: 20 }}
-      eventClick={clickEvent}
-      headerToolbar={{
-        left: "prev,today,next",
-        center: "title",
-        right: "timeGridDay,timeGridWeek",
-      }}
-      buttonText={{
-        today: "Hoje",
-        month: "Mês",
-        week: "Semana",
-        day: "Dia",
-      }}
-      events={listaEventos}
-    />
+    <>
+      <div className="flex items-center justify-between">
+        <Breadcrumb items={breacrumb} />
+        <div className="flex items-center gap-4">
+          <a className="flex items-center gap-1">
+            Apenas horários disponíveis:
+            <input
+              type="checkbox"
+              className="form-checkbox border-gray-500 text-gray-200"
+              value={+apenasDisponivel}
+              onClick={() => setApenasDisponivel(!apenasDisponivel)}
+            />
+          </a>
+          <select
+            className="h-9 w-64 text-xs"
+            value={funcionarioSelecionado}
+            onChange={handleSelecionarOpcao}
+          >
+            <option value="">Selecione um funcionário...</option>
+            {funcionarios.map((funcionario: Funcionario, index: number) => (
+              <option key={index} value={funcionario.codigo}>
+                {funcionario.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <FullCalendar
+        height={"100%"}
+        plugins={[timeGridPlugin]}
+        initialView="timeGridWeek"
+        weekends={false}
+        eventContent={renderEventContent}
+        locale={"PT-BR"}
+        allDaySlot={false}
+        nowIndicator={true}
+        initialDate={new Date()}
+        slotMinTime={{ hour: 7 }}
+        slotMaxTime={{ hour: 20 }}
+        eventClick={clickEvent}
+        headerToolbar={{
+          left: "prev,today,next",
+          center: "title",
+          right: "timeGridDay,timeGridWeek",
+        }}
+        buttonText={{
+          today: "Hoje",
+          month: "Mês",
+          week: "Semana",
+          day: "Dia",
+        }}
+        events={listaEventos}
+      />
+    </>
   );
 }

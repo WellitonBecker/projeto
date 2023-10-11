@@ -4,6 +4,8 @@ import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import UpdateFuncioario from "./UpdateFuncionario";
 import { useState } from "react";
+import ButtonDelete from "@/components/ButtonDelete";
+import ButtonUpdate from "@/components/ButtonUpdate";
 
 interface itemProps {
   codigo: string;
@@ -52,20 +54,16 @@ export default function TableFuncionario({
         <td className="border py-1 text-center">
           {item?.codigo != undefined && (
             <div className="grid grid-cols-2 items-center max-md:grid-cols-1">
-              <a
-                className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+              <ButtonUpdate
+                title="Serviço"
                 onClick={() => {
                   setFuncionarioSelected(item?.codigo);
                 }}
-              >
-                <p>Alterar</p>
-              </a>
-              <a
-                className="font-medium text-red-600 hover:underline"
+              />
+              <ButtonDelete
+                title="Serviço"
                 onClick={() => excluirFuncionario(item.codigo)}
-              >
-                <p>Excluir</p>
-              </a>
+              />
             </div>
           )}
         </td>

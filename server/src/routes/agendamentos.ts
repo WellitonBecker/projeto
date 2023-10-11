@@ -1,6 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
+
+interface Horarios {
+  horario: string;
+  funcionario: string;
+}
 
 export async function agendamentosRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
@@ -127,6 +133,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                   usuario: {
                     select: {
                       usunome: true,
+                      usucodigo: true,
                     },
                   },
                 },
@@ -162,6 +169,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                   usuario: {
                     select: {
                       usunome: true,
+                      usucodigo: true,
                     },
                   },
                 },
@@ -184,13 +192,14 @@ export async function agendamentosRoutes(app: FastifyInstance) {
         },
       });
     }
-
     return agendamentos.map((agendamento) => {
       return {
         cliente: agendamento.usuario.usunome,
         servico: agendamento.funcionarioservico.servico.serdescricao,
         funcionario:
           agendamento.funcionarioservico.funcionarioempresa.usuario.usunome,
+        codigoFuncionario:
+          agendamento.funcionarioservico.funcionarioempresa.usuario.usucodigo.toString(),
         valor: agendamento.agevalor,
         situacao: agendamento.agesituacao,
         dataHora: agendamento.agedatahora,
@@ -198,4 +207,58 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       };
     });
   });
+
+  app.get(
+    "/agendamentos/empresa/apenasdisponiveis",
+    async (request, response) => {
+      const querySchema = z.object({
+        empresa: z.string(),
+      });
+
+      const { empresa } = querySchema.parse(request.query);
+      try {
+        const sql = `
+        with horarios as (
+          SELECT generate_series(
+                '2023-09-01 08:00:00'::timestamp, -- Data e hora inicial
+                '2023-12-31 18:00:00'::timestamp, -- Data e hora final
+                '30 minutes'::interval             -- Intervalo de 30 minutos
+            ) horario
+          )
+  
+          select concat((horario::date)::text,'T', (horario::time + '03:00')::text,'.000Z')::text horario,
+                 funcionarioempresa.usucodigo::text as funcionario
+            from horarios
+            join funcionarioempresa
+              on funcionarioempresa.empcodigo = ${parseInt(empresa)}
+             and funcionarioempresa.fueativo = 1
+           where not exists(
+                select 1
+                  from agendamento
+                 where concat(agendamento.agedatahora::date,' ', (agendamento.agedatahora::time - '03:00'))::timestamp = horarios.horario
+                   and agendamento.agesituacao = 1
+                   and agendamento.empcodigo = funcionarioempresa.empcodigo
+                   and agendamento.usucodigofun = funcionarioempresa.usucodigo
+                )
+           and horarios.horario::time between '08:00' and '18:00'
+           and horarios.horario::time not in ('12:00', '12:30')
+      `;
+        const result = await prisma.$queryRaw<Horarios[]>(Prisma.raw(sql));
+
+        const horarios = new Array();
+        result.forEach((horario) => {
+          horarios.push({
+            dataHora: horario.horario,
+            situacao: "0",
+            codigoFuncionario: horario.funcionario,
+          });
+        });
+        return horarios;
+      } catch (error) {
+        return response.status(500).send(error);
+      } finally {
+        await prisma.$disconnect();
+      }
+    }
+  );
 }

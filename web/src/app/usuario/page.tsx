@@ -7,7 +7,7 @@ import TableUsuario from "./components/Table";
 
 interface Usuario {
   nome: string;
-  email: string;
+  telefone: string;
 }
 
 export const metadata = {

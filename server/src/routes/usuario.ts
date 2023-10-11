@@ -44,7 +44,7 @@ export async function usuarioRoute(app: FastifyInstance) {
     });
 
     return usuarios.map((usuario) => {
-      return { nome: usuario.usunome, email: usuario.usuemail };
+      return { nome: usuario.usunome, telefone: usuario.usutelefone };
     });
   });
 

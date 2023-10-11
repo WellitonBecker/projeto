@@ -10,14 +10,14 @@ export async function funcionarioRoutes(app: FastifyInstance) {
   app.get("/funcionarios", async (request) => {
     const querySchema = z.object({
       empresa: z.string(),
-      apenasAtivo: z.boolean().default(true),
+      apenasAtivo: z.number().default(1),
     });
 
     const { empresa, apenasAtivo } = querySchema.parse(request.query);
     const funcionarios = await prisma.funcionarioempresa.findMany({
       where: {
         empcodigo: parseInt(empresa),
-        // fueativo: +apenasAtivo,
+        fueativo: apenasAtivo,
       },
       include: {
         usuario: {
@@ -87,12 +87,21 @@ export async function funcionarioRoutes(app: FastifyInstance) {
     };
   });
 
-  app.delete("/funcionario", async (request, reply) => {
+  app.delete("/funcionario", async (request) => {
     const querySchema = z.object({
       funcionario: z.string(),
       empresa: z.string(),
     });
     const { funcionario, empresa } = querySchema.parse(request.query);
+
+    await prisma.funcionarioservico.deleteMany({
+      where: {
+        funcionarioempresa: {
+          empcodigo: parseInt(empresa),
+          usucodigo: parseInt(funcionario),
+        },
+      },
+    });
 
     await prisma.funcionarioempresa.delete({
       where: {

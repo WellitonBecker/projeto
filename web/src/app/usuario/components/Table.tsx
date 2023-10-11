@@ -1,6 +1,6 @@
 interface itemProps {
   nome: string;
-  email: string;
+  telefone: string;
 }
 
 interface props {
@@ -12,7 +12,7 @@ export default function TableUsuario({ itens }: props) {
     return (
       <tr className="hover:bg-gray-100" key={indice}>
         <td className="border px-2 py-1">{item?.nome}</td>
-        <td className="border px-2 py-1">{item?.email}</td>
+        <td className="border px-2 py-1">{item?.telefone}</td>
       </tr>
     );
   }
@@ -22,7 +22,7 @@ export default function TableUsuario({ itens }: props) {
       <thead className="sticky bg-gray-300">
         <tr>
           <th className="border px-4 py-2">Nome</th>
-          <th className="border px-4 py-2">Email</th>
+          <th className="border px-4 py-2">Telefone</th>
         </tr>
       </thead>
       <tbody>{itens.map((item) => criaLinhas(++indiceLinha, item))}</tbody>
