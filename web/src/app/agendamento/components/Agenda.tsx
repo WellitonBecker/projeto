@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid"; // a plugin!
 import Breadcrumb from "@/components/Breadcrumb";
+import DetalhesPedido from "./DetalhesPedido";
 
 interface Agendamento {
   codigo: string;
@@ -21,6 +22,8 @@ interface Funcionario {
 }
 
 interface AgendaProps {
+  codigoEmpresa: string;
+  token: string | undefined;
   funcionarios: Array<Funcionario>;
   agendamentosFunc: {
     [codigoFuncionario: string]: Array<Agendamento>;
@@ -31,6 +34,8 @@ interface AgendaProps {
 }
 
 export default function Agenda({
+  codigoEmpresa,
+  token,
   funcionarios,
   agendamentosFunc,
   agendamentosFuncDisp,
@@ -39,6 +44,9 @@ export default function Agenda({
   const [agendamentos, setAgendamentos] = useState<Array<Agendamento>>([]);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState("");
   const [apenasDisponivel, setApenasDisponivel] = useState(false);
+
+  const [openModal, setOpenModal] = useState<string | undefined>();
+  const [eventInfo, setEventInfo] = useState<Agendamento>();
 
   useEffect(() => {
     setAgendamentos([]);
@@ -57,7 +65,7 @@ export default function Agenda({
     let cor;
     switch (parseInt(item.situacao)) {
       case 0:
-        cor = "orange";
+        cor = "#839602";
         break;
       case 1:
         cor = "blue";
@@ -81,19 +89,14 @@ export default function Agenda({
       end: dataFim,
       backgroundColor: cor,
       borderColor: cor,
+      ...item,
     });
   });
 
-  function renderEventContent(eventInfo: any) {
-    return (
-      <>
-        <p>{eventInfo.event.title}</p>
-      </>
-    );
-  }
-
   function clickEvent(eventInfo: any) {
-    alert(JSON.stringify(eventInfo));
+    // alert(JSON.stringify(eventInfo.event.extendedProps))
+    setOpenModal("form-elements");
+    setEventInfo(eventInfo.event.extendedProps);
   }
 
   const handleSelecionarOpcao = (event: any) => {
@@ -137,7 +140,7 @@ export default function Agenda({
         plugins={[timeGridPlugin]}
         initialView="timeGridWeek"
         weekends={false}
-        eventContent={renderEventContent}
+        eventContent={(eventInfo) => <p>{eventInfo.event.title}</p>}
         locale={"PT-BR"}
         allDaySlot={false}
         nowIndicator={true}
@@ -157,6 +160,13 @@ export default function Agenda({
           day: "Dia",
         }}
         events={listaEventos}
+      />
+      <DetalhesPedido
+        codigoEmpresa={codigoEmpresa}
+        token={token}
+        eventInfo={eventInfo}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
       />
     </>
   );

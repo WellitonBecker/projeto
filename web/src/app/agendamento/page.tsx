@@ -78,6 +78,8 @@ export default async function Page() {
         funcionarios={responseFuncionarios.data}
         agendamentosFunc={agendamentosFunc}
         agendamentosFuncDisp={agendamentosFuncDisp}
+        codigoEmpresa={sub}
+        token={token}
       />
     </>
   );

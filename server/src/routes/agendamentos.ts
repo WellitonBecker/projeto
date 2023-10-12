@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 
 interface Horarios {
   horario: string;
+  codigofuncionario: string;
   funcionario: string;
 }
 
@@ -214,24 +215,26 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       const querySchema = z.object({
         empresa: z.string(),
       });
-
       const { empresa } = querySchema.parse(request.query);
       try {
         const sql = `
         with horarios as (
           SELECT generate_series(
-                '2023-09-01 08:00:00'::timestamp, -- Data e hora inicial
-                '2023-12-31 18:00:00'::timestamp, -- Data e hora final
+                '2023-10-01 08:00:00'::timestamp, -- Data e hora inicial
+                '2023-10-31 18:00:00'::timestamp, -- Data e hora final
                 '30 minutes'::interval             -- Intervalo de 30 minutos
             ) horario
           )
   
           select concat((horario::date)::text,'T', (horario::time + '03:00')::text,'.000Z')::text horario,
-                 funcionarioempresa.usucodigo::text as funcionario
+                 funcionarioempresa.usucodigo::text as codigofuncionario,
+                 usuario.usunome as funcionario
             from horarios
             join funcionarioempresa
               on funcionarioempresa.empcodigo = ${parseInt(empresa)}
              and funcionarioempresa.fueativo = 1
+            join usuario
+              on usuario.usucodigo = funcionarioempresa.usucodigo
            where not exists(
                 select 1
                   from agendamento
@@ -240,6 +243,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                    and agendamento.empcodigo = funcionarioempresa.empcodigo
                    and agendamento.usucodigofun = funcionarioempresa.usucodigo
                 )
+           and horarios.horario >= current_timestamp    
            and horarios.horario::time between '08:00' and '18:00'
            and horarios.horario::time not in ('12:00', '12:30')
       `;
@@ -250,7 +254,8 @@ export async function agendamentosRoutes(app: FastifyInstance) {
           horarios.push({
             dataHora: horario.horario,
             situacao: "0",
-            codigoFuncionario: horario.funcionario,
+            funcionario: horario.funcionario,
+            codigoFuncionario: horario.codigofuncionario,
           });
         });
         return horarios;
