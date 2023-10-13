@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "14.x"
+    "node": "19.2.0"
   },  
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.2.0",
