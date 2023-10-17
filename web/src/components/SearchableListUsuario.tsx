@@ -1,6 +1,5 @@
 import { api } from "@/lib/api";
-import { Spinner } from "flowbite-react";
-import router from "next/router";
+import { Spinner, TextInput } from "flowbite-react";
 import React, { useState, useEffect } from "react";
 
 interface Usuario {
@@ -65,19 +64,18 @@ export default function SearchableList({
   };
 
   return (
-    <div className="relative">
-      <input
+    <>
+      <TextInput
         type="text"
         placeholder="Digite pelo menos 3 letras..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full rounded border p-2"
         style={{ zIndex: 1 }} // Defina um z-index alto para o campo de pesquisa
       />
       {isLoading && (
-      <div className="absolute z-10 flex h-16 w-full items-center justify-center border bg-white ">
-        <Spinner aria-label="Default status example" size="lg" />
-      </div>
+        <div className="absolute z-10 flex h-16 w-full items-center justify-center border bg-white ">
+          <Spinner aria-label="Default status example" size="lg" />
+        </div>
       )}
       {mostraLista && (
         <>
@@ -103,6 +101,6 @@ export default function SearchableList({
           )}
         </>
       )}
-    </div>
+    </>
   );
 }

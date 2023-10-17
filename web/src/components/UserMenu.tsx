@@ -25,6 +25,13 @@ export default function UserMenu({ menuRef }: props) {
       </a>
       <hr className="text-gray-100" />
       <a
+        href="/empresa"
+        className="block rounded-t-lg px-4 py-2 text-gray-700 hover:bg-gray-50"
+      >
+        Empresa
+      </a>
+      <hr className="text-gray-100" />
+      <a
         onClick={onClickSair}
         className="block rounded-b-lg px-4 py-2 text-red-500 hover:bg-gray-50"
       >

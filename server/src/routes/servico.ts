@@ -118,15 +118,12 @@ export async function servicosRoute(app: FastifyInstance) {
   });
 
   app.get("/servico/busca", async (request) => {
-    console.log("Chegou");
-
     const querySchema = z.object({
       empresa: z.string(),
       sequencia: z.string(),
     });
 
     const { empresa, sequencia } = querySchema.parse(request.query);
-    console.log(empresa, "--", sequencia);
     const servico = await prisma.servico.findUnique({
       where: {
         empcodigo_sersequencia: {
@@ -143,5 +140,41 @@ export async function servicosRoute(app: FastifyInstance) {
       valor: servico?.servalor,
       ativo: servico?.serativo,
     };
+  });
+
+  app.get("/servico/profissional", async (request) => {
+    const querySchema = z.object({
+      empresa: z.string(),
+      funcionario: z.string(),
+    });
+
+    const { empresa, funcionario } = querySchema.parse(request.query);
+
+    const servicos = await prisma.servico.findMany({
+      select: {
+        serdescricao: true,
+        sersequencia: true,
+      },
+      where: {
+        empresa: {
+          empcodigo: parseInt(empresa),
+        },
+        funcionarioservico: {
+          some: {
+            usucodigo: parseInt(funcionario),
+          },
+        },
+      },
+      orderBy: {
+        serdescricao: "asc",
+      },
+    });
+
+    return servicos.map((servico) => {
+      return {
+        sequencia: servico.sersequencia.toString(),
+        descricao: servico.serdescricao,
+      };
+    });
   });
 }

@@ -1,3 +1,4 @@
+import { Select } from "flowbite-react";
 import React, { useState } from "react";
 
 interface Funcionario {
@@ -23,7 +24,7 @@ export default function ListaFuncionarios({
 
   return (
     <div>
-      <select
+      <Select
         className="h-9 w-64 text-xs"
         value={funcionarioSelecionado}
         onChange={handleSelecionarOpcao}
@@ -34,7 +35,7 @@ export default function ListaFuncionarios({
             {funcionario.nome}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }

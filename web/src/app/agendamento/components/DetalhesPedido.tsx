@@ -1,7 +1,8 @@
+import SearchableList from "@/components/SearchableListUsuario";
 import { api } from "@/lib/api";
-import { Modal, Label, TextInput, Button } from "flowbite-react";
+import { Modal, Label, TextInput, Button, Select } from "flowbite-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 interface Agendamento {
   codigo: string;
@@ -35,16 +36,45 @@ export default function DetalhesPedido({
 
   const [servico, setServico] = useState("");
   const [cliente, setCliente] = useState("");
+  const [listaServicos, setListaServicos] = useState<
+    Array<{
+      sequencia: string;
+      descricao: string;
+    }>
+  >([]);
+
+  const buscaServicos = async () => {
+    setListaServicos([]);
+    if (eventInfo?.codigoFuncionario != undefined) {
+      const response = await api.get(
+        `/servico/profissional?empresa=${codigoEmpresa}&funcionario=${eventInfo?.codigoFuncionario}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setListaServicos(response.data);
+    }
+  };
+
+  useEffect(() => {
+    buscaServicos();
+  }, [eventInfo]);
 
   const router = useRouter();
 
-  async function handleSubmitAgendamento(event: FormEvent<HTMLFormElement>) {}
+  const fecharModal = async () => {
+    setOpenModal(undefined);
+    setCliente("");
+    setServico("");
+  };
 
   async function incluirAgendamento(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const retorno = await api.post(
-      "/servico",
+      "/agendamento",
       {
         funcionario: eventInfo?.codigoFuncionario,
         servico,
@@ -68,10 +98,28 @@ export default function DetalhesPedido({
   }
 
   async function cancelarAgendamento() {
-    alert("cancelar");
+    await api.patch(
+      `/agendamento?codigo=${eventInfo?.codigo}&situacao=3`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    fecharModal();
   }
   async function concluirAgendamento() {
-    alert("concluir");
+    await api.patch(
+      `/agendamento?codigo=${eventInfo?.codigo}&situacao=2`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    fecharModal();
   }
 
   const dataHora = eventInfo?.dataHora;
@@ -98,15 +146,11 @@ export default function DetalhesPedido({
       show={openModal === "form-elements"}
       size="md"
       popup
-      onClose={() => {
-        setOpenModal(undefined);
-        setCliente("");
-        setServico("");
-      }}
+      onClose={fecharModal}
     >
       <Modal.Header />
       <Modal.Body>
-        <form onSubmit={handleSubmitAgendamento}>
+        <form onSubmit={incluirAgendamento}>
           <div className="space-y-3">
             <h2 className="text-xl font-medium text-gray-900 dark:text-white">
               Agendamento
@@ -126,28 +170,47 @@ export default function DetalhesPedido({
               <div className="mb-1 block">
                 <Label htmlFor="cliente" value="Cliente:" />
               </div>
-              <TextInput
-                id="cliente"
-                type="text"
-                required
-                disabled={!agendamentoDisponivel}
-                value={cliente}
-                onChange={(event) => setCliente(event.target.value)}
-              />
+              {agendamentoDisponivel ? (
+                <SearchableList
+                  onSelectItem={(item) => setCliente(item.codigo)}
+                />
+              ) : (
+                <TextInput id="cliente" value={eventInfo?.cliente} disabled />
+              )}
+              {}
             </div>
 
             <div>
               <div className="mb-1 block">
                 <Label htmlFor="servico" value="Serviço:" />
               </div>
-              <TextInput
-                id="servico"
-                type="text"
-                disabled={!agendamentoDisponivel}
-                required
-                value={servico}
-                onChange={(event) => setServico(event.target.value)}
-              />
+              {agendamentoDisponivel ? (
+                <Select
+                  id="servico"
+                  disabled={!agendamentoDisponivel}
+                  required
+                  value={servico}
+                  onChange={(event) => setServico(event.target.value)}
+                >
+                  <option defaultChecked value={""}>
+                    Selecione...
+                  </option>
+                  {listaServicos.length > 0 &&
+                    listaServicos.map((servicoLista) => {
+                      const selected = servicoLista.sequencia == servico;
+                      return (
+                        <option
+                          value={servicoLista.sequencia}
+                          selected={selected}
+                        >
+                          {servicoLista.descricao}
+                        </option>
+                      );
+                    })}
+                </Select>
+              ) : (
+                <TextInput id="servico" value={eventInfo?.servico} disabled />
+              )}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>

@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { HttpStatusCode } from "axios";
 
 interface Horarios {
   horario: string;
@@ -99,6 +100,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       empresa: agendamento.empcodigo.toString(),
       usuario: agendamento.usucodigocli.toString(),
       funcionario: agendamento.usucodigofun.toString(),
+      situacao: agendamento.agesituacao,
       valor: agendamento.agevalor,
       dataHora: agendamento.agedatahora,
     };
@@ -125,6 +127,9 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       agendamentos = await prisma.agendamento.findMany({
         where: {
           empcodigo: parseInt(empresa),
+          agesituacao: {
+            in: [1, 2],
+          },
         },
         include: {
           funcionarioservico: {
@@ -239,7 +244,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                 select 1
                   from agendamento
                  where concat(agendamento.agedatahora::date,' ', (agendamento.agedatahora::time - '03:00'))::timestamp = horarios.horario
-                   and agendamento.agesituacao = 1
+                   and agendamento.agesituacao in (1,2)
                    and agendamento.empcodigo = funcionarioempresa.empcodigo
                    and agendamento.usucodigofun = funcionarioempresa.usucodigo
                 )
@@ -266,4 +271,37 @@ export async function agendamentosRoutes(app: FastifyInstance) {
       }
     }
   );
+
+  app.patch("/agendamento", async (request, response) => {
+    const querySchema = z.object({
+      codigo: z.string(),
+      situacao: z.string(),
+    });
+
+    const { codigo, situacao } = querySchema.parse(request.query);
+
+    const agendamento = await prisma.agendamento.update({
+      where: {
+        agecodigo: parseInt(codigo),
+      },
+      data: {
+        agesituacao: parseInt(situacao),
+      },
+    });
+
+    if (agendamento) {
+      return {
+        empresa: agendamento.empcodigo.toString(),
+        usuario: agendamento.usucodigocli.toString(),
+        funcionario: agendamento.usucodigofun.toString(),
+        situacao: agendamento.agesituacao,
+        valor: agendamento.agevalor,
+        dataHora: agendamento.agedatahora,
+      };
+    } else {
+      return response
+        .status(HttpStatusCode.BadRequest)
+        .send("Agendamento não encontrado");
+    }
+  });
 }
