@@ -99,8 +99,8 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
 
     try {
       const { empresa, funcionario, data } = querySchema.parse(request.query);
-      const dataSplit = data.split('/')
-      const dataFormatada = `${dataSplit[2]}-${dataSplit[1]}-${dataSplit[0]}`
+      const dataSplit = data.split("/");
+      const dataFormatada = `${dataSplit[2]}-${dataSplit[1]}-${dataSplit[0]}`;
       try {
         const sql = `
         with horarios as (
@@ -122,6 +122,13 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
                   and agendamento.usucodigofun = ${parseInt(funcionario)}
                   and agendamento.agedatahora::date = '${dataFormatada}'
                   )
+             and not exists (
+                    select 1
+                      from restricoesagenda
+                     where restricoesagenda.empcodigo = ${parseInt(empresa)}
+                       and restricoesagenda.readata::date = '${dataFormatada}'
+                       and horarios.hora between concat(restricoesagenda.reahorarioinicio, '00')::time and concat(restricoesagenda.reahorariotermino, '00')::time
+               )      
              and horarios.hora not in ('12:00', '12:30')
              and case when current_date = '${dataFormatada}'
                       then (current_time::time - '03:00')::time < horarios.hora

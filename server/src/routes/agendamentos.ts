@@ -248,6 +248,13 @@ export async function agendamentosRoutes(app: FastifyInstance) {
                    and agendamento.empcodigo = funcionarioempresa.empcodigo
                    and agendamento.usucodigofun = funcionarioempresa.usucodigo
                 )
+           and not exists (
+                select 1
+                  from restricoesagenda
+                 where restricoesagenda.empcodigo = funcionarioempresa.empcodigo
+                   and restricoesagenda.readata::date = horarios.horario::date
+                   and horarios.horario::time between concat(restricoesagenda.reahorarioinicio, '00')::time and concat(restricoesagenda.reahorariotermino, '00')::time
+           )     
            and horarios.horario >= current_timestamp    
            and horarios.horario::time between '08:00' and '18:00'
            and horarios.horario::time not in ('12:00', '12:30')

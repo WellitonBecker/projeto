@@ -10,6 +10,7 @@ import { servicosRoute } from "./routes/servico";
 import { agendamentosRoutes } from "./routes/agendamentos";
 import { newAgendamentoRoutes } from "./routes/newAgendamento";
 import { funcionarioRoutes } from "./routes/funcionario";
+import restricaoagendaRoutes from "./routes/restricaoagenda";
 
 const app = fastify();
 
@@ -31,6 +32,7 @@ app.register(servicosRoute);
 app.register(agendamentosRoutes);
 app.register(newAgendamentoRoutes);
 app.register(funcionarioRoutes);
+app.register(restricaoagendaRoutes);
 // app.register(uploadRoutes)
 
 app

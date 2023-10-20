@@ -49,7 +49,6 @@ model funcionarioempresa {
   usuario            usuario              @relation(fields: [usucodigo], references: [usucodigo], onDelete: NoAction, onUpdate: NoAction, map: "usuario_funcionarioempresa_fk")
   funcionarioservico funcionarioservico[]
   movimentacao       movimentacao[]
-  restricoesagenda   restricoesagenda[]
 
   @@id([usucodigo, empcodigo], map: "pk_funcionario_empresa")
 }
@@ -115,16 +114,14 @@ model produto {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model restricoesagenda {
-  reacodigo          BigInt             @id(map: "pk_restricoesagenda")
-  reahorarioinicio   DateTime           @db.Time(6)
-  reahorariotermino  DateTime           @db.Time(6)
-  reaativo           Int                @default(1) @db.SmallInt
-  reatipo            Int                @db.SmallInt
-  readata            DateTime           @db.Date
-  empcodigo          BigInt
-  usucodigo          BigInt
-  empresa            empresa            @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_restricoesagenda_fk")
-  funcionarioempresa funcionarioempresa @relation(fields: [usucodigo, empcodigo], references: [usucodigo, empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "funcionarioempresa_restricoesagenda_fk")
+  reacodigo         BigInt  @id(map: "pk_restricoesagenda") @default(autoincrement())
+  reahorarioinicio  String
+  reahorariotermino String
+  reaativo          Int     @default(1) @db.SmallInt
+  reatipo           Int     @db.SmallInt
+  readata           String
+  empcodigo         BigInt
+  empresa           empresa @relation(fields: [empcodigo], references: [empcodigo], onDelete: NoAction, onUpdate: NoAction, map: "empresa_restricoesagenda_fk")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

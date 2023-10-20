@@ -32,6 +32,12 @@ export default function Sidebar() {
                 <span className="hidden lg:block">Serviços</span>
               </div>
             </LinkMenu>
+            <LinkMenu href="/restricaoempresa">
+              <div className="flex items-center justify-start">
+                {/* <ClipboardList size={18} className="mr-2" /> */}
+                <span className="hidden lg:block">Restrições da Empresa</span>
+              </div>
+            </LinkMenu>
             <LinkMenu href="/usuario">
               <div className="flex items-center justify-start ">
                 {/* <PackageOpen size={18} className="mr-2" /> */}

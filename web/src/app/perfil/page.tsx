@@ -1,5 +1,6 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumb";
+import { Label, TextInput } from "flowbite-react";
 import { cookies } from "next/headers";
 import { useState } from "react";
 
@@ -54,96 +55,68 @@ export default function Perfil() {
             alt={`Foto de perfil de ${firstName} ${lastName}`}
             className="mx-auto mb-4 h-32 w-32 rounded-full"
           />
-          {editing ? (
-            <div className="mb-4">
-              <input
+          <div className="text-start">
+            <div className="mb-3">
+              <Label
+                className="ml-1"
+                htmlFor="firstName"
+                value="Primeiro Nome:"
+              />
+              <TextInput
+                id="firstName"
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="mr-2 border border-gray-300 p-2"
                 placeholder="Primeiro Nome"
+                disabled={!editing}
               />
-              <input
+            </div>
+            <div className="mb-3">
+              <Label className="ml-1" htmlFor="lastName" value="Último Nome:" />
+              <TextInput
+                id="lastName"
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="ml-2 border border-gray-300 p-2"
                 placeholder="Último Nome"
+                disabled={!editing}
               />
             </div>
-          ) : (
-            <div className="mb-4">
-              <h2 className="mb-2 text-2xl font-semibold">
-                {firstName} {lastName}
-              </h2>
-            </div>
-          )}
-          {editing && (
-            <div className="mb-4">
-              <input
+            <div className="mb-3">
+              <Label className="ml-1" htmlFor="telefone" value="Telefone:" />
+              <TextInput
+                id="telefone"
                 type="text"
-                value={avatarUrl}
-                onChange={(e) => setAvatarUrl(e.target.value)}
-                className="border border-gray-300 p-2"
-                placeholder="URL da Imagem do Avatar"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Telefone"
+                disabled={!editing}
               />
-            </div>
-          )}
-
-          <div className="mb-4">
-            <div>
-              <label className="text-gray-600">Email:</label>
-              {editing ? (
-                <input
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 p-2"
-                  placeholder="Email"
-                />
-              ) : (
-                <p className="text-lg font-semibold">{email}</p>
-              )}
-            </div>
-            <div className="mt-4">
-              <label className="text-gray-600">Telefone:</label>
-              {editing ? (
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border border-gray-300 p-2"
-                  placeholder="Telefone"
-                />
-              ) : (
-                <p className="text-lg font-semibold">{phone}</p>
-              )}
             </div>
           </div>
 
           <div className="mb-4">
             {editing ? (
-              <button
-                onClick={handleSaveClick}
-                className="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-              >
-                Salvar
-              </button>
+              <>
+                <button
+                  onClick={handleSaveClick}
+                  className="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                >
+                  Salvar
+                </button>
+                <button
+                  onClick={() => setEditing(false)}
+                  className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
+                >
+                  Cancelar
+                </button>
+              </>
             ) : (
               <button
                 onClick={handleEditClick}
                 className="mr-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
               >
                 Editar
-              </button>
-            )}
-
-            {editing && (
-              <button
-                onClick={() => setEditing(false)}
-                className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
-              >
-                Cancelar
               </button>
             )}
           </div>
