@@ -6,14 +6,17 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-native-modal";
 import NewAgendamento from "../../components/NewAgendamento";
 import AppointmentCard from "../../components/AppointmentCard";
+import Feedback from "../../components/Feedback";
 
 interface Agendamento {
+  codigo: string;
   nomeEmpresa: string;
   servico: string;
   funcionario: string;
   valor: string;
   situacao: number;
   dataHora: string;
+  feedback: Array<{ agendamento: string; descricao: string; nota: number }>;
 }
 
 export function Home() {
@@ -26,9 +29,24 @@ export function Home() {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data);
-
     setAgendamentos(response.data);
+  }
+
+  async function onPressCancelar(codigo: string) {
+    const token = await SecureStore.getItemAsync("token");
+    await api.patch(
+      `/agendamento`,
+      {
+        codigo,
+        situacao: "3",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    loadMemories();
   }
 
   useEffect(() => {
@@ -36,14 +54,22 @@ export function Home() {
   }, []);
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalFeedbackVisible, setIsModalFeedbackVisible] = useState(false);
+  const [feedbackSelected, setFeedbackSelected] = useState(null);
+  const [agendamentoSelected, setAgendamentoSelected] = useState(null);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+  const toggleModalFeedback = () => {
+    setIsModalFeedbackVisible(!isModalFeedbackVisible);
+    setAgendamentoSelected(null);
+    setFeedbackSelected(null);
+  };
 
   return (
     <>
-      <Header />
+      <Header onPressAtualizar={loadMemories} />
       <View>
         <Button title="Novo agendamento" onPress={toggleModal} />
       </View>
@@ -57,8 +83,14 @@ export function Home() {
             return (
               <AppointmentCard
                 agendamento={agendamento}
-                onCancelPress={() => {}}
-                onFeedbackPress={() => {}}
+                onCancelPress={() => onPressCancelar(agendamento.codigo)}
+                onFeedbackPress={() => {
+                  toggleModalFeedback();
+                  setAgendamentoSelected(agendamento.codigo);
+                  if (agendamento.feedback.length > 0) {
+                    setFeedbackSelected(agendamento.feedback[0]);
+                  }
+                }}
                 key={agendamento.dataHora}
               />
             );
@@ -78,6 +110,24 @@ export function Home() {
         <View style={styles.modalContainer}>
           <Text style={{ marginTop: 15, fontSize: 25 }}>Novo Agendamento</Text>
           <NewAgendamento onCloseModal={toggleModal} />
+        </View>
+      </Modal>
+      <Modal
+        isVisible={isModalFeedbackVisible}
+        style={{
+          width: "100%",
+          backgroundColor: "#ffffff",
+          margin: 0,
+          paddingLeft: 20,
+          justifyContent: "center",
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={{ marginTop: 15, fontSize: 25 }}>Feedback</Text>
+          <Feedback
+            onCloseModal={toggleModalFeedback}
+            agendamento={agendamentoSelected}
+          />
         </View>
       </Modal>
     </>

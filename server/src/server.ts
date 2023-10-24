@@ -11,6 +11,7 @@ import { agendamentosRoutes } from "./routes/agendamentos";
 import { newAgendamentoRoutes } from "./routes/newAgendamento";
 import { funcionarioRoutes } from "./routes/funcionario";
 import restricaoagendaRoutes from "./routes/restricaoagenda";
+import { feedbackRoutes } from "./routes/feedback";
 
 const app = fastify();
 
@@ -33,6 +34,7 @@ app.register(agendamentosRoutes);
 app.register(newAgendamentoRoutes);
 app.register(funcionarioRoutes);
 app.register(restricaoagendaRoutes);
+app.register(feedbackRoutes);
 // app.register(uploadRoutes)
 
 app

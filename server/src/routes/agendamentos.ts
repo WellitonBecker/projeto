@@ -1,8 +1,8 @@
-import { FastifyInstance } from "fastify";
-import { prisma } from "../lib/prisma";
-import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { HttpStatusCode } from "axios";
+import { FastifyInstance } from "fastify";
+import { z } from "zod";
+import { prisma } from "../lib/prisma";
 
 interface Horarios {
   horario: string;
@@ -44,14 +44,22 @@ export async function agendamentosRoutes(app: FastifyInstance) {
             },
           },
         },
+        feedback: {
+          select: {
+            agecodigo: true,
+            feedescricao: true,
+            feenota: true,
+          },
+        },
       },
       orderBy: {
-        // agedatahora: "asc",
+        agedatahora: "desc",
       },
     });
 
     return agendamentos.map((agendamento) => {
       return {
+        codigo: agendamento.agecodigo.toString(),
         nomeEmpresa:
           agendamento.funcionarioservico.funcionarioempresa.empresa.empnome,
         servico: agendamento.funcionarioservico.servico.serdescricao,
@@ -60,6 +68,13 @@ export async function agendamentosRoutes(app: FastifyInstance) {
         valor: agendamento.agevalor,
         situacao: agendamento.agesituacao,
         dataHora: agendamento.agedatahora.toLocaleString(),
+        feedback: agendamento.feedback.map((feedbak) => {
+          return {
+            agendamento: feedbak.agecodigo.toString(),
+            descricao: feedbak.feedescricao,
+            nota: feedbak.feenota,
+          };
+        }),
       };
     });
   });
@@ -280,12 +295,18 @@ export async function agendamentosRoutes(app: FastifyInstance) {
   );
 
   app.patch("/agendamento", async (request, response) => {
+    let dadosRequest = request.query;
     const querySchema = z.object({
       codigo: z.string(),
       situacao: z.string(),
     });
 
-    const { codigo, situacao } = querySchema.parse(request.query);
+    if (dadosRequest && Object.keys(dadosRequest).length === 0) {
+      dadosRequest = request.body;
+    }
+    console.log(dadosRequest);
+
+    const { codigo, situacao } = querySchema.parse(dadosRequest);
 
     const agendamento = await prisma.agendamento.update({
       where: {

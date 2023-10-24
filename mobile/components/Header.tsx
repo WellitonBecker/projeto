@@ -9,7 +9,11 @@ interface User {
   avatarUrl: string;
 }
 
-export default function Header() {
+interface HeaderProps {
+  onPressAtualizar: any;
+}
+
+export default function Header({ onPressAtualizar }: HeaderProps) {
   const [isToken, setIsToken] = useState(false);
   const [token, setToken] = useState("");
 
@@ -25,6 +29,7 @@ export default function Header() {
   return (
     <View style={styles.header}>
       <Text style={styles.username}>Olá, {user.name}</Text>
+      <Button title="Atualizar" onPress={onPressAtualizar} />
       <Button
         title="Sair"
         onPress={() => {

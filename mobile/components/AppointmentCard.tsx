@@ -57,12 +57,22 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           gap: 10,
         }}
       >
-        <TouchableOpacity onPress={onFeedbackPress}>
-          <Button title="Feedback" color={"#b59618"} />
-        </TouchableOpacity>
+        {agendamento.situacao != 3 && (
+          <TouchableOpacity>
+            <Button
+              title="Feedback"
+              color={"#b59618"}
+              onPress={onFeedbackPress}
+            />
+          </TouchableOpacity>
+        )}
         {agendamento.situacao == 1 && (
-          <TouchableOpacity onPress={onCancelPress}>
-            <Button title="Cancelar" color={"#bf0202"} />
+          <TouchableOpacity>
+            <Button
+              title="Cancelar"
+              color={"#bf0202"}
+              onPress={onCancelPress}
+            />
           </TouchableOpacity>
         )}
       </View>
