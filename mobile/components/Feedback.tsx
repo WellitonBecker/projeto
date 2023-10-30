@@ -63,7 +63,7 @@ export default function Feedback({ onCloseModal, agendamento }: FeedbackProps) {
     });
 
     const feedback = response.data;
-    console.log(response)
+    // console.log(response)
     if (feedback) {
       setNota(feedback.nota);
       setDescricao(feedback.descricao);
@@ -77,13 +77,16 @@ export default function Feedback({ onCloseModal, agendamento }: FeedbackProps) {
         <TextInput
           style={styles.textArea}
           underlineColorAndroid="transparent"
-          value={descricao.toString()}
+          value={descricao?.toString()}
           onChangeText={setDescricao}
           numberOfLines={10}
           multiline={true}
         />
       </View>
-      <RatingBar defaultRating={+nota} setDefaultRating={setNota} />
+      <RatingBar
+        defaultRating={nota == null ? 0 : +nota}
+        setDefaultRating={setNota}
+      />
       <View style={styles.footer}>
         <View style={styles.buttonFooter}>
           <Button title="Confirmar" onPress={incluirFeedback} />
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.grey20,
     borderWidth: 1,
     padding: 5,
-    backgroundColor: '#345'
+    backgroundColor: "#345",
   },
   textArea: {
     height: 150,

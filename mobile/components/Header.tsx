@@ -29,8 +29,9 @@ export default function Header({ onPressAtualizar }: HeaderProps) {
   return (
     <View style={styles.header}>
       <Text style={styles.username}>Olá, {user.name}</Text>
-      <Button title="Atualizar" onPress={onPressAtualizar} />
+      {/* <Button title="Atualizar" onPress={onPressAtualizar} /> */}
       <Button
+        color={'red'}
         title="Sair"
         onPress={() => {
           SecureStore.setItemAsync("token", "");
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: "#f0f7",
+    backgroundColor: "#0578",
   },
   username: {
     fontSize: 18,

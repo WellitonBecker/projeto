@@ -26,6 +26,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(null);
   const [selectedHorario, setSelectedHorario] = useState("");
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
+  const [permiteListaEspera, setPermiteListaEspera] = useState<boolean>(false);
 
   async function incluirAgendamento() {
     const token = await SecureStore.getItemAsync("token");
@@ -74,6 +75,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
 
   async function loadHorarios() {
     setHorariosDisponiveis([]);
+    setPermiteListaEspera(false);
     if (!selectedCompany || !selectedProfessional || !selectedDate) {
       return;
     }
@@ -87,6 +89,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
 
     if (response.status == 200) {
       setHorariosDisponiveis(response.data);
+      setPermiteListaEspera(response.data.length == 0);
     } else {
       setHorariosDisponiveis([]);
     }
@@ -110,14 +113,27 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
         <DataPicker onSelect={setSelectedDate} />
       </View>
       <View style={{ flex: 2 / 3 }}>
-        <Text>Horário: *</Text>
-        <View style={{ backgroundColor: "#3b3c3d", flex: 1 }}>
-          <TimePickerList
-            data={horariosDisponiveis}
-            onSelect={setSelectedHorario}
-            selectedTime={selectedHorario}
-          />
-        </View>
+        {horariosDisponiveis.length > 0 && (
+          <>
+            <Text>Horário: *</Text>
+            <View style={{ backgroundColor: "#3b3c3d", flex: 1 }}>
+              <TimePickerList
+                data={horariosDisponiveis}
+                onSelect={setSelectedHorario}
+                selectedTime={selectedHorario}
+              />
+            </View>
+          </>
+        )}
+        {permiteListaEspera && (
+          <>
+            <Text style={{ color: "red" }}>
+              Não possui mais horários disponível para a data selecionada. Caso
+              você confirmar o agendamento para esta data entrará em uma lista
+              de espera.
+            </Text>
+          </>
+        )}
       </View>
 
       <View style={styles.footer}>
