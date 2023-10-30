@@ -241,7 +241,7 @@ export async function agendamentosRoutes(app: FastifyInstance) {
         with horarios as (
           SELECT generate_series(
                 '2023-10-01 08:00:00'::timestamp, -- Data e hora inicial
-                '2023-10-31 18:00:00'::timestamp, -- Data e hora final
+                '2023-11-30 18:00:00'::timestamp, -- Data e hora final
                 '30 minutes'::interval             -- Intervalo de 30 minutos
             ) horario
           )

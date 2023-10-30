@@ -74,13 +74,13 @@ export default function Page() {
               alt={`Foto de perfil de ${nome}`}
               className="mx-auto mb-4 mr-5 h-32 w-32 rounded-full"
             /> */}
-            <Image
+            {/* <Image
               src={imagemLogo}
               width={5}
               height={5}
               alt={`Foto de perfil de ${nome}`}
               className="mx-auto mb-4 mr-5 h-32 w-32 rounded-full"
-            />
+            /> */}
             <div className="w-72 ">
               <div className="mb-3">
                 <Label className="ml-1" htmlFor="nome" value="Nome:" />
