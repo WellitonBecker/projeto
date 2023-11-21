@@ -79,46 +79,53 @@ export async function agendamentosRoutes(app: FastifyInstance) {
     });
   });
 
-  app.post("/agendamento", async (request) => {
-    const bodySchema = z.object({
-      funcionario: z.string(),
-      servico: z.string(),
-      usuario: z.string(),
-      empresa: z.string(),
-      dataHora: z.coerce.date(),
-    });
+  app.post("/agendamento", async (request, response) => {
+    try {
+      const bodySchema = z.object({
+        funcionario: z.string(),
+        servico: z.string(),
+        usuario: z.string(),
+        empresa: z.string(),
+        dataHora: z.coerce.date(),
+        listaEspera: z.boolean().default(false),
+      });
 
-    const { funcionario, servico, usuario, empresa, dataHora } =
-      bodySchema.parse(request.body);
+      const { funcionario, servico, usuario, empresa, dataHora, listaEspera } =
+        bodySchema.parse(request.body);
 
-    const servicoOriginal = await prisma.servico.findUnique({
-      where: {
-        empcodigo_sersequencia: {
+      const servicoOriginal = await prisma.servico.findUnique({
+        where: {
+          empcodigo_sersequencia: {
+            empcodigo: parseInt(empresa),
+            sersequencia: parseInt(servico),
+          },
+        },
+      });
+
+      const agendamento = await prisma.agendamento.create({
+        data: {
           empcodigo: parseInt(empresa),
           sersequencia: parseInt(servico),
+          usucodigocli: parseInt(usuario),
+          usucodigofun: parseInt(funcionario),
+          agevalor: servicoOriginal?.servalor || 0.0,
+          agedatahora: dataHora,
+          agesituacao: !listaEspera ? 1 : 4,
         },
-      },
-    });
+      });
 
-    const agendamento = await prisma.agendamento.create({
-      data: {
-        empcodigo: parseInt(empresa),
-        sersequencia: parseInt(servico),
-        usucodigocli: parseInt(usuario),
-        usucodigofun: parseInt(funcionario),
-        agevalor: servicoOriginal?.servalor || 0.0,
-        agedatahora: dataHora,
-      },
-    });
-
-    return {
-      empresa: agendamento.empcodigo.toString(),
-      usuario: agendamento.usucodigocli.toString(),
-      funcionario: agendamento.usucodigofun.toString(),
-      situacao: agendamento.agesituacao,
-      valor: agendamento.agevalor,
-      dataHora: agendamento.agedatahora,
-    };
+      return {
+        empresa: agendamento.empcodigo.toString(),
+        usuario: agendamento.usucodigocli.toString(),
+        funcionario: agendamento.usucodigofun.toString(),
+        situacao: agendamento.agesituacao,
+        valor: agendamento.agevalor,
+        dataHora: agendamento.agedatahora,
+      };
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send(error);
+    }
   });
 
   app.get("/agendamentos/empresa", async (request) => {

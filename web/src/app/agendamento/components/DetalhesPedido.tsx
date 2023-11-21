@@ -241,7 +241,7 @@ export default function DetalhesPedido({
                 {agendamentoPendente && (
                   <div className="grid grid-cols-2 gap-2">
                     <a onClick={concluirAgendamento}>
-                      <Button color={"green"}>Concluir</Button>
+                      <Button color={"green"}>Finalizar</Button>
                     </a>
                     <a onClick={cancelarAgendamento}>
                       <Button color={"red"}>Cancelar</Button>

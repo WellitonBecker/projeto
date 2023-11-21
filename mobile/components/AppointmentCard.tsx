@@ -21,6 +21,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onFeedbackPress,
   onCancelPress,
 }) => {
+  const data = agendamento.dataHora.split(", ")[0];
   return (
     <View style={styles.card}>
       <Text style={styles.title}>
@@ -36,8 +37,17 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         {agendamento.funcionario}
       </Text>
       <Text>
-        <Text style={styles.textDescricao}>Data/Hora: </Text>
-        {agendamento.dataHora}
+        {agendamento.situacao != 4 ? (
+          <>
+            <Text style={styles.textDescricao}>Data/Hora: </Text>
+            {agendamento.dataHora}
+          </>
+        ) : (
+          <>
+            <Text style={styles.textDescricao}>Data: </Text>
+            {data}
+          </>
+        )}
       </Text>
       <Text>
         <Text style={styles.textDescricao}>Situação: </Text>
@@ -45,6 +55,8 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           ? "Agendado"
           : agendamento.situacao == 2
           ? "Concluído"
+          : agendamento.situacao == 4
+          ? "Lista de Espera"
           : "Cancelado"}
       </Text>
       <View
@@ -57,7 +69,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           gap: 10,
         }}
       >
-        {agendamento.situacao != 3 && (
+        {agendamento.situacao < 3 && (
           <TouchableOpacity>
             <Button
               title="Feedback"

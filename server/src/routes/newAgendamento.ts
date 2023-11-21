@@ -130,6 +130,7 @@ export async function newAgendamentoRoutes(app: FastifyInstance) {
                        and horarios.hora between concat(restricoesagenda.reahorarioinicio, '00')::time and concat(restricoesagenda.reahorariotermino, '00')::time
                )      
              and horarios.hora not in ('12:00', '12:30')
+             and extract(dow from '${dataFormatada}'::date) not in (0,7)
              and case when current_date = '${dataFormatada}'
                       then (current_time::time - '03:00')::time < horarios.hora
                       else true

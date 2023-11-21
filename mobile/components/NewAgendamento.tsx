@@ -35,13 +35,14 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
     if (
       !selectedCompany ||
       !selectedService ||
-      !selectedProfessional ||
-      !selectedHorario
+      !selectedProfessional
+      // !selectedHorario
     ) {
       Alert.alert("Erro", "Necessário que todos os campos sejam selecionados.");
     } else {
       const dataSplit = selectedDate.toLocaleDateString().split("/");
-      const horarioSplit = selectedHorario.split(":");
+      const horario = selectedHorario ? selectedHorario : "00:00";
+      const horarioSplit = horario.split(":");
 
       const dataFormatada = new Date(
         parseInt(dataSplit[2]),
@@ -59,7 +60,8 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
           servico: selectedService,
           usuario: user.sub,
           empresa: selectedCompany,
-          dataHora: `${dataFormatada.toISOString()}`,
+          dataHora: dataFormatada ? `${dataFormatada.toISOString()}` : "",
+          listaEspera: selectedHorario != undefined || selectedHorario != null,
         },
         {
           headers: {
