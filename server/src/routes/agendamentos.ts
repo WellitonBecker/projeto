@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, agendamento } from "@prisma/client";
 import { HttpStatusCode } from "axios";
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
@@ -311,7 +311,6 @@ export async function agendamentosRoutes(app: FastifyInstance) {
     if (dadosRequest && Object.keys(dadosRequest).length === 0) {
       dadosRequest = request.body;
     }
-    console.log(dadosRequest);
 
     const { codigo, situacao } = querySchema.parse(dadosRequest);
 

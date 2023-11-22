@@ -145,3 +145,37 @@ model usuario {
 
   @@index([usunome], map: "usuario_idx_nome")
 }
+
+// CREATE OR REPLACE FUNCTION fn_atualiza_lista_espera()
+// RETURNS TRIGGER AS
+// $BODY$
+// DECLARE
+//   I_AGEND_LISTA_ESP BIGINT;
+// BEGIN
+
+//   IF(NEW.AGESITUACAO = 3) THEN
+
+// 	SELECT AGENDAMENTO.AGECODIGO
+// 	  INTO I_AGEND_LISTA_ESP
+// 	  FROM AGENDAMENTO
+// 	 WHERE AGESITUACAO = 4
+// 	   AND AGEDATAHORA::DATE = OLD.AGEDATAHORA::DATE
+// 	   AND USUCODIGOFUN = OLD.USUCODIGOFUN
+//   ORDER BY AGECODIGO
+// 	 LIMIT 1;
+
+// 	UPDATE AGENDAMENTO
+// 	   SET AGESITUACAO = 1
+// 	 WHERE AGENDAMENTO.AGECODIGO = I_AGEND_LISTA_ESP;
+
+//   END IF;
+
+//   RETURN new;
+// END;
+// $BODY$
+// LANGUAGE 'plpgsql' VOLATILE;
+
+// CREATE OR REPLACE TRIGGER tg_atualiza_lista_espera 
+// BEFORE UPDATE ON agendamento
+// FOR EACH ROW
+// EXECUTE FUNCTION fn_atualiza_lista_espera();
