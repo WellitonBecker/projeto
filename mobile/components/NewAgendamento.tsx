@@ -52,7 +52,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
         parseInt(horarioSplit[1]),
         parseInt("00")
       );
-
+      
       const response = await api.post(
         "/agendamento",
         {
@@ -61,7 +61,7 @@ export default function NewAgendamento({ onCloseModal }: NewAgendamentoProps) {
           usuario: user.sub,
           empresa: selectedCompany,
           dataHora: dataFormatada ? `${dataFormatada.toISOString()}` : "",
-          listaEspera: selectedHorario != undefined || selectedHorario != null,
+          listaEspera: selectedHorario == undefined || selectedHorario == null || selectedHorario == '',
         },
         {
           headers: {

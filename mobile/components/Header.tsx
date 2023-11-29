@@ -29,7 +29,7 @@ export default function Header({ onPressAtualizar }: HeaderProps) {
   return (
     <View style={styles.header}>
       <Text style={styles.username}>Olá, {user.name}</Text>
-      {/* <Button title="Atualizar" onPress={onPressAtualizar} /> */}
+      <Button title="Atualizar" onPress={onPressAtualizar}  />
       <Button
         color={'red'}
         title="Sair"

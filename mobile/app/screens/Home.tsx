@@ -79,7 +79,7 @@ export function Home() {
             <Text>Você ainda não possui nenhum agendamento</Text>
           </View>
         ) : (
-          agendamentos.map((agendamento) => {
+          agendamentos.map((agendamento, i) => {
             return (
               <AppointmentCard
                 agendamento={agendamento}
@@ -91,7 +91,7 @@ export function Home() {
                     setFeedbackSelected(agendamento.feedback[0]);
                   }
                 }}
-                key={agendamento.dataHora}
+                key={i}
               />
             );
           })
